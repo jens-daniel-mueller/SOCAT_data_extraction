@@ -16,14 +16,39 @@ editor_options:
 
 ```{r set_path}
 
-
+path_SOCAT <- "/nfs/kryo/work/updata/SOCAT/"
 
 ```
 
 
 # Read files
 
-```{r read_files}
+```{r read_files, eval=FALSE}
+
+file <- "SOCATv2021.tsv"
+file <- "SOCATv2021_FlagE.tsv"
+
+
+# identify the number of rows to skip by playing around with the import data set functionality in RStudio
+
+df <- read_tsv(file = paste0(path_SOCAT, file)
+               , skip = 5859)
+
+df <- df %>% 
+  select(4:12, 14:16, 19, 21:26)
+
+df <- df %>% 
+  rename(lon = `longitude [dec.deg.E]`, 
+         lat = `latitude [dec.deg.N]`,
+         SST = `SST [deg.C]`, 
+         Tequ = `Tequ [deg.C]`, 
+         dep = `ETOPO2_depth [m]`,
+         dist_land = `dist_to_land [km]`,
+         GVCO2 = `GVCO2 [umol/mol]`,
+         fCO2rec = `fCO2rec [uatm]`)
+
+nrow_total <- nrow(df)
+
 
 ```
 
