@@ -1,0 +1,132 @@
+---
+title: "Read synthesis files"
+author: "Jens Daniel Müller"
+date:  "`r format(Sys.time(), '%d %B, %Y')`"
+output: 
+  workflowr::wflow_html:
+    number_sections: true
+    toc_depth: 3
+    toc_float:
+      collapsed: false
+editor_options:
+  chunk_output_type: console
+---
+
+```{r libraries}
+
+library(tidyverse)
+library(geosphere)
+
+```
+
+
+# Set path
+
+```{r set_path}
+
+path_SOCAT <- "/nfs/kryo/work/updata/SOCAT/"
+print(path_SOCAT)
+
+```
+
+
+# Read files
+
+```{r read_files, eval=FALSE}
+
+file_all <- "SOCATv2021.tsv"
+file_FlagE <- "SOCATv2021_FlagE.tsv"
+
+
+# Finnmaid DOI subset -----------------------------------------------------
+
+meta <- read_delim(
+  file = paste0(path_SOCAT, file_all),
+  "\t",
+  escape_double = FALSE,
+  trim_ws = TRUE,
+  skip = 4,
+  n_max = 6564
+)
+
+meta <- meta %>%
+  filter(`Platform Name` %in% c("Finnmaid", "VOS Finnpartner"))
+
+Finnmaid_Expocode <- meta$Expocode
+
+f <-
+  function(x, pos) subset(x, Expocode %in% Finnmaid_Expocode)
+
+df_Expocode_all <-
+  read_tsv_chunked(
+    file = paste0(path_SOCAT, file_all),
+    skip = 6623,
+    DataFrameCallback$new(f),
+    chunk_size = 100000
+  )
+
+rm(f, meta, Finnmaid_Expocode_all)
+
+# Finnmaid Flag E DOI subset ----------------------------------------------
+
+meta <- read_delim(
+  file = paste0(path_SOCAT, file_FlagE),
+  "\t",
+  escape_double = FALSE,
+  trim_ws = TRUE,
+  skip = 4,
+  n_max = 194
+)
+
+meta <- meta %>%
+  filter(`Platform Name` %in% c("Finnmaid", "VOS Finnpartner"))
+
+Finnmaid_Expocode <- meta$Expocode
+
+f <-
+  function(x, pos) subset(x, Expocode %in% Finnmaid_Expocode)
+
+df_Expocode_E <-
+  read_tsv_chunked(
+    file = paste0(path_SOCAT, file_FlagE),
+    skip = 251,
+    DataFrameCallback$new(f),
+    chunk_size = 100000
+  )
+
+rm(f, meta, Finnmaid_Expocode)
+
+# Merge Central Baltic Sea and DOI data set -------------------------------
+
+df <-
+  bind_rows(df_Expocode_all %>% mutate(across(yr:ss, as.character)),
+            df_Expocode_E %>% mutate(across(yr:ss, as.character)))
+
+df <- df %>% 
+  rename("lon" = "longitude [dec.deg.E]",
+         "lat" = "latitude [dec.deg.N]",
+         "fCO2" = "fCO2rec [uatm]",
+         "SST" = "SST [deg.C]") %>% 
+  mutate(date_time = lubridate::ymd_hms(paste(yr, mon, day, hh, mm, ss))) %>% 
+  select(date_time, yr, mon, lon, lat, sal, SST, fCO2)
+
+
+
+df %>% 
+  filter(lat > 59, lat < 59.05) %>% 
+  ggplot(aes(date_time, fCO2, col=SST))+
+  geom_point()+
+  scale_color_viridis_c()+
+  labs(x="", y="fCO2", title = "Finnpartner / Finnmaid data",
+      subtitle = "Subsets from SOCATv2021 incl Flag E  | Lat range: 59-59.05N")+
+  theme_bw()
+
+
+
+# Safe merged data file ---------------------------------------------------
+
+df %>%
+  write_csv(paste0(path_SOCAT, "SOCATv2021_Baltic_Finnmaid.csv"))
+
+```
+
