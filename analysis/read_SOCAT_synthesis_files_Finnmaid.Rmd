@@ -15,7 +15,6 @@ editor_options:
 ```{r libraries}
 
 library(tidyverse)
-library(geosphere)
 
 ```
 
@@ -123,10 +122,157 @@ df %>%
 
 
 
+```
+
+# Identify cruises
+
+```{r cruise_identification}
+
+# time_lag_limit <- 60*60*10
+
+for (time_lag_limit in seq(0.2, 20, 0.1)*60^2) {
+  
+  print(time_lag_limit/60^2)
+  
+  df <- df %>%
+  arrange(date_time) %>%
+  mutate(cruise = cumsum(c(TRUE, diff(date_time) >= time_lag_limit)))
+  
+  cruise_duration <- df %>% 
+    group_by(cruise) %>% 
+    summarise(cruise_duration = 
+                as.numeric(difftime(max(date_time), min(date_time), units = "hours"))) %>% 
+    summarise(min_duration = min(cruise_duration),
+              max_duration = max(cruise_duration))
+
+  cruise_counts_temp <- bind_cols( 
+  time_lag_limit = time_lag_limit/60^2,
+  n_cruises = max(df$cruise)
+  )
+  
+  cruise_counts_temp <- bind_cols(
+    cruise_counts_temp,
+    cruise_duration
+  )
+  
+  if (exists("cruise_counts")) {
+    cruise_counts <- bind_rows(cruise_counts, cruise_counts_temp)
+  }
+  
+  if (!exists("cruise_counts")) {
+    cruise_counts <- cruise_counts_temp
+  }
+
+  
+}
+
+cruise_counts %>% 
+  ggplot(aes(time_lag_limit, n_cruises)) +
+  geom_path() +
+  geom_point()
+
+cruise_counts %>% 
+  ggplot(aes(time_lag_limit, max_duration)) +
+  geom_path() +
+  geom_point() +
+  coord_cartesian(ylim = c(0,100))
+
+cruise_counts %>%
+  ggplot(aes(time_lag_limit, min_duration)) +
+  geom_path() +
+  geom_point() +
+  coord_cartesian(ylim = c(0, 1))
+
+rm(cruise_counts, cruise_counts_temp, cruise_duration)
+
+
+for (time_lag_limit in seq(2, 8, 2)*60^2) {
+  
+  print(time_lag_limit/60^2)
+  
+  df <- df %>%
+  arrange(date_time) %>%
+  mutate(cruise = cumsum(c(TRUE, diff(date_time) >= time_lag_limit)))
+  
+  cruise_duration <- df %>% 
+    group_by(cruise) %>% 
+    summarise(cruise_duration = 
+                as.numeric(difftime(max(date_time), min(date_time), units = "hours")))
+
+  cruise_counts_temp <- bind_cols( 
+  time_lag_limit = time_lag_limit/60^2,
+  n_cruises = max(df$cruise)
+  )
+  
+  cruise_counts_temp <- bind_cols(
+    cruise_counts_temp,
+    cruise_duration
+  )
+  
+  if (exists("cruise_counts")) {
+    cruise_counts <- bind_rows(cruise_counts, cruise_counts_temp)
+  }
+  
+  if (!exists("cruise_counts")) {
+    cruise_counts <- cruise_counts_temp
+  }
+
+  
+}
+
+
+
+cruise_counts %>% 
+  ggplot(aes(as.factor(time_lag_limit), cruise_duration)) +
+  geom_violin()
+
+
+time_lag_limit <- 5*60^2
+
+df <- df %>%
+  arrange(date_time) %>%
+  mutate(cruise = cumsum(c(TRUE, diff(date_time) >= time_lag_limit)))
+
+cruise_duration <- df %>%
+  group_by(cruise) %>%
+  summarise(cruise_duration =
+              as.numeric(difftime(max(date_time), min(date_time), units = "hours")))
+
+df <- df %>%
+  group_by(cruise) %>%
+  mutate(cruise_duration =
+              as.numeric(difftime(max(date_time), min(date_time), units = "hours")))
+
+
+cruise_duration %>% 
+  ggplot(aes(cruise_duration)) +
+  geom_histogram()
+
+df %>% 
+  ggplot(aes(cruise_duration)) +
+  geom_histogram()
+
+df %>% filter(cruise_duration < 10) %>% 
+  count(cruise)
+
+df <- df %>% 
+  filter(cruise_duration >= 10) %>% 
+  select(cruise, date_time, yr, mon, lon, lat, sal, SST, fCO2)
+
+```
+
+
+# Write summary file
+
+
+```{r write_file}
+
+
 # Safe merged data file ---------------------------------------------------
 
 df %>%
   write_csv(paste0(path_SOCAT, "SOCATv2021_Baltic_Finnmaid.csv"))
+
 
 ```
 
