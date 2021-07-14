@@ -104,7 +104,7 @@ wflow_open("analysis/read_SOCAT_synthesis_files.Rmd")
 
 
 # commit regular changes (locally) and rebuild site
-wflow_publish(all = TRUE, message = "calculated regional time series")
+wflow_publish(all = TRUE, message = "clean up scripts")
 
 # commit changes including _site.yml (locally) and rebuild site in the specified order
 wflow_publish(here::here(

@@ -40,11 +40,11 @@ print(path_SOCAT)
 
 ```{r read_files}
 
-df <-
+SOCAT_Finn <-
   read_csv(paste0(path_SOCAT, "SOCATv2021_Baltic_Finnmaid.csv"))
 
 
-df <- df %>% 
+SOCAT_Finn <- SOCAT_Finn %>% 
   drop_na()
 
 ```
@@ -52,14 +52,27 @@ df <- df %>%
 
 # Track
 
-```{r track}
+```{r track_map}
 
-df %>%
-  ggplot(aes(lon, lat)) +
-           geom_bin2d(binwidth = 0.1) +
-           scale_fill_viridis_c() +
-           coord_quickmap(expand = 0)
-         
+baltic_map <-
+  ggplot(data = map_data("world"),
+         aes(x = long, y = lat)) +
+  geom_polygon(aes(group = group), fill = "grey80", colour = "black") +
+  coord_map("ortho", xlim = c(11, 29), ylim = c(54, 61))
+
+baltic_map <-
+ggplot(data = map_data("world"),
+         aes(x = long, y = lat)) +
+  geom_polygon(aes(group = group), fill = "grey80", colour = "black") +
+  coord_quickmap(xlim = c(11, 29), ylim = c(54, 61))
+
+baltic_map +
+  geom_bin2d(data = SOCAT_Finn,
+             aes(lon, lat),
+             binwidth = 0.1) +
+  scale_fill_viridis_c() +
+  labs(title = "Observations on 0.1° x 0.1° grid")
+
 
 ```
 
@@ -73,7 +86,7 @@ for (i_var in vars) {
   # i_var <- vars[1]
   
   print(
-  df %>%
+  SOCAT_Finn %>%
     ggplot(aes(mon, lat, z = !!sym(i_var))) +
     stat_summary_2d() +
     scale_fill_viridis_c(name = i_var) +
@@ -86,47 +99,53 @@ for (i_var in vars) {
 
 ```
 
-## Regional time series
+# Regional time series
 
-```{r regional_time_series}
+## Determine routes
 
-# tag data inside study area to be analyzed
-cruises_G <- df %>%
+```{r route_determination}
+
+# determine cruises on Gydnia (G) route
+cruises_G <- SOCAT_Finn %>%
   mutate(
-    Area = point.in.polygon(
+    region = point.in.polygon(
       point.x = lon,
       point.y = lat,
       pol.x = c(16,20.5,20),
       pol.y = c(55,57,54)
     )) %>%  
-  filter(Area == 1) %>% 
+  filter(region == 1) %>% 
   distinct(cruise) %>% 
   pull()
 
-cruises_E <- df %>%
+# determine cruises on Eastern (E) route around Gotland
+cruises_E <- SOCAT_Finn %>%
   mutate(
-    Area = point.in.polygon(
+    region = point.in.polygon(
       point.x = lon,
       point.y = lat,
       pol.x = c(18,18,19.5,20.5,19),
       pol.y = c(56,57,58,58,56.5)
     )) %>%  
-  filter(Area == 1) %>% 
+  filter(region == 1) %>% 
   distinct(cruise) %>% 
   pull()
 
-cruises_P <- df %>% 
+# determine cruises to St. Petersburg (P)
+cruises_P <- SOCAT_Finn %>% 
   filter(lon > 29) %>% 
   distinct(cruise) %>% 
   pull()
 
-df <- df %>% 
+# assign route labels
+SOCAT_Finn <- SOCAT_Finn %>% 
   mutate(route = "W",
          route = if_else(cruise %in% cruises_E, "E", route),
          route = if_else(cruise %in% cruises_G, "G", route),
          route = if_else(cruise %in% cruises_P, "P", route))
 
-df <- df %>%
+# cut into lat lon grid
+SOCAT_Finn <- SOCAT_Finn %>%
   mutate(lat_grid = as.numeric(as.character(cut(
     lat, seq(50, 65, 0.1), seq(50.05, 64.95, 0.1)
   ))),
@@ -134,21 +153,25 @@ df <- df %>%
     lon, seq(10, 35, 0.1), seq(10.05, 34.95, 0.1)
   ))))
 
-df_routes <- df %>% 
+SOCAT_Finn_routes <- SOCAT_Finn %>% 
   count(lat_grid, lon_grid, route)
 
+baltic_map +
+  geom_raster(data = SOCAT_Finn_routes %>% select(-route),
+              aes(lon_grid, lat_grid), fill = "grey80") +
+  geom_raster(data = SOCAT_Finn_routes,
+              aes(lon_grid, lat_grid), fill = "red") +
+  facet_wrap( ~ route)
 
-df_routes %>%
-  ggplot(aes(lon_grid, lat_grid, fill = route)) +
-           geom_raster() +
-           coord_quickmap(expand = 0) +
-  scale_x_continuous(breaks = seq(10,30,1)) +
-  scale_y_continuous(breaks = seq(50,70,1)) +
-  facet_wrap(~ route)
+```
 
+## Assign region
 
-df <- df %>% 
-  mutate(Area = case_when(
+```{r region_determination}
+
+# Assign regions according to Schneider and Müller (2018)
+SOCAT_Finn <- SOCAT_Finn %>% 
+  mutate(region = case_when(
     lon>12 & lon<12.6 ~ "1.MEB",
     lon>13.1 & lon<14.3 ~ "2.ARK",
     lat>57.5 & lat<58.5 & route %in% c("E", "G") ~ "4.EGS",
@@ -156,26 +179,34 @@ df <- df %>%
     lat>58.5 & lat<59 & lon>20 ~ "5.NGS",
     lon>22 & lon<24 ~ "6.WGF",
     lon>24 & lon<24.5 ~ "7.HGF")) %>% 
-  filter(!is.na(Area))
+  filter(!is.na(region))
 
 
-df_reg <- df %>% 
-  group_by(Area, cruise) %>% 
+```
+
+## Plot time series
+
+```{r regional_time_series}
+
+# calculate mean values for each crossing of each region
+SOCAT_Finn_region <- SOCAT_Finn %>% 
+  group_by(region, cruise) %>% 
   summarise(date_time = mean(date_time),
             fCO2 = mean(fCO2),
             SST = mean(SST),
             sal = mean(sal)) %>% 
   ungroup()
 
-
-df_reg_long <- df_reg %>% 
+# convert to long format
+SOCAT_Finn_region_long <- SOCAT_Finn_region %>% 
   pivot_longer(fCO2:sal,
                names_to = "parameter",
                values_to = "value")
 
-df_reg_long %>%
+# plot time series
+SOCAT_Finn_region_long %>%
   group_split(parameter) %>%
-  # head(1) %>% 
+  # head(1) %>%
   map(
     ~ ggplot(data = .x,
              aes(date_time, value)) +
@@ -183,17 +214,19 @@ df_reg_long %>%
       scale_x_datetime(breaks = "2 years",
                        date_labels = "%Y") +
       labs(y = unique(.x$parameter)) +
-      facet_grid(Area ~ .)
+      facet_grid(region ~ .)
   )
 
 
 ```
 
-# Write
+
+
+# Write time series file
 
 ```{r write_file}
 
-df_reg %>% 
+SOCAT_Finn_region %>% 
   select(-cruise) %>% 
   write_csv(here::here("data/", "Baltic_regions_fCO2_time_series.csv"))
 

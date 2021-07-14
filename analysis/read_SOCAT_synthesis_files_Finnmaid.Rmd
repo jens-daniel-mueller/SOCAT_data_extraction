@@ -1,5 +1,5 @@
 ---
-title: "Read synthesis files"
+title: "Read Finnmaid data from synthesis files"
 author: "Jens Daniel Müller"
 date:  "`r format(Sys.time(), '%d %B, %Y')`"
 output: 
@@ -12,20 +12,16 @@ editor_options:
   chunk_output_type: console
 ---
 
-```{r libraries}
-
+```{r libraries, echo=FALSE}
 library(tidyverse)
-
 ```
 
 
 # Set path
 
 ```{r set_path}
-
 path_SOCAT <- "/nfs/kryo/work/updata/SOCAT/"
 print(path_SOCAT)
-
 ```
 
 
@@ -33,11 +29,22 @@ print(path_SOCAT)
 
 ```{r read_files}
 
+# define file names
 file_all <- "SOCATv2021.tsv"
 file_FlagE <- "SOCATv2021_FlagE.tsv"
 
+# # create file with SOCAT header
+# header <- read_lines(
+#   file = paste0(path_SOCAT, file_all),
+#   n_max = 7000
+# )
+# 
+# header %>% 
+#   write_lines(here::here("data/",
+#                          "SOCATv2021_header.txt"))
 
-# Finnmaid DOI subset -----------------------------------------------------
+# Determine DOI with Finnmaid/Finnpartner data in regular synthesis file
+# and read only those data
 
 meta <- read_delim(
   file = paste0(path_SOCAT, file_all),
@@ -49,24 +56,25 @@ meta <- read_delim(
 )
 
 meta <- meta %>%
-  filter(`Platform Name` %in% c("Finnmaid", "VOS Finnpartner"))
+  filter(str_detect(`Platform Name`, "Finn"))
 
-Finnmaid_Expocode <- meta$Expocode
+Finn_Expocodes <- meta$Expocode
 
-f <-
-  function(x, pos) subset(x, Expocode %in% Finnmaid_Expocode)
+f_subset <-
+  function(x, pos) subset(x, Expocode %in% Finn_Expocodes)
 
-df_Expocode_all <-
+SOCAT_Finn <-
   read_tsv_chunked(
     file = paste0(path_SOCAT, file_all),
     skip = 6623,
-    DataFrameCallback$new(f),
+    DataFrameCallback$new(f_subset),
     chunk_size = 100000
   )
 
-rm(f, meta, Finnmaid_Expocode_all)
+rm(meta, Finn_Expocodes)
 
-# Finnmaid Flag E DOI subset ----------------------------------------------
+# Determine DOI with Finnmaid/Finnpartner data in flag E synthesis file
+# and read only those data
 
 meta <- read_delim(
   file = paste0(path_SOCAT, file_FlagE),
@@ -80,28 +88,30 @@ meta <- read_delim(
 meta <- meta %>%
   filter(`Platform Name` %in% c("Finnmaid", "VOS Finnpartner"))
 
-Finnmaid_Expocode <- meta$Expocode
+Finn_Expocodes <- meta$Expocode
 
-f <-
-  function(x, pos) subset(x, Expocode %in% Finnmaid_Expocode)
-
-df_Expocode_E <-
+SOCAT_Finn_E <-
   read_tsv_chunked(
     file = paste0(path_SOCAT, file_FlagE),
     skip = 251,
-    DataFrameCallback$new(f),
+    DataFrameCallback$new(f_subset),
     chunk_size = 100000
   )
 
-rm(f, meta, Finnmaid_Expocode)
+rm(f_subset, meta, Finn_Expocodes)
 
-# Merge Central Baltic Sea and DOI data set -------------------------------
 
-df <-
-  bind_rows(df_Expocode_all %>% mutate(across(yr:ss, as.character)),
-            df_Expocode_E %>% mutate(across(yr:ss, as.character)))
+# Merge data from regular and flag E synthesis file
 
-df <- df %>% 
+SOCAT_Finn <-
+  bind_rows(SOCAT_Finn %>% mutate(across(yr:ss, as.character)),
+            SOCAT_Finn_E %>% mutate(across(yr:ss, as.character)))
+
+rm(SOCAT_Finn_E)
+
+# rename and subset columns
+
+SOCAT_Finn <- SOCAT_Finn %>% 
   rename("lon" = "longitude [dec.deg.E]",
          "lat" = "latitude [dec.deg.N]",
          "fCO2" = "fCO2rec [uatm]",
@@ -110,8 +120,9 @@ df <- df %>%
   select(date_time, yr, mon, lon, lat, sal, SST, fCO2)
 
 
+# Plot time series to check read-in procedure
 
-df %>% 
+SOCAT_Finn %>% 
   filter(lat > 59, lat < 59.05) %>% 
   ggplot(aes(date_time, fCO2, col=SST))+
   geom_point()+
@@ -126,19 +137,19 @@ df %>%
 
 # Identify cruises
 
-```{r cruise_identification}
+In order to identify cruises, we determine a threshold for the time lag between observations. 
 
-# time_lag_limit <- 60*60*10
+```{r cruise_identification, fig.asp=0.5}
 
 for (time_lag_limit in seq(0.2, 20, 0.1)*60^2) {
   
-  print(time_lag_limit/60^2)
+  # print(time_lag_limit/60^2)
   
-  df <- df %>%
+  SOCAT_Finn <- SOCAT_Finn %>%
   arrange(date_time) %>%
   mutate(cruise = cumsum(c(TRUE, diff(date_time) >= time_lag_limit)))
   
-  cruise_duration <- df %>% 
+  cruise_duration <- SOCAT_Finn %>% 
     group_by(cruise) %>% 
     summarise(cruise_duration = 
                 as.numeric(difftime(max(date_time), min(date_time), units = "hours"))) %>% 
@@ -147,7 +158,7 @@ for (time_lag_limit in seq(0.2, 20, 0.1)*60^2) {
 
   cruise_counts_temp <- bind_cols( 
   time_lag_limit = time_lag_limit/60^2,
-  n_cruises = max(df$cruise)
+  n_cruises = max(SOCAT_Finn$cruise)
   )
   
   cruise_counts_temp <- bind_cols(
@@ -188,20 +199,20 @@ rm(cruise_counts, cruise_counts_temp, cruise_duration)
 
 for (time_lag_limit in seq(2, 8, 2)*60^2) {
   
-  print(time_lag_limit/60^2)
+  # print(time_lag_limit/60^2)
   
-  df <- df %>%
+  SOCAT_Finn <- SOCAT_Finn %>%
   arrange(date_time) %>%
   mutate(cruise = cumsum(c(TRUE, diff(date_time) >= time_lag_limit)))
   
-  cruise_duration <- df %>% 
+  cruise_duration <- SOCAT_Finn %>% 
     group_by(cruise) %>% 
     summarise(cruise_duration = 
                 as.numeric(difftime(max(date_time), min(date_time), units = "hours")))
 
   cruise_counts_temp <- bind_cols( 
   time_lag_limit = time_lag_limit/60^2,
-  n_cruises = max(df$cruise)
+  n_cruises = max(SOCAT_Finn$cruise)
   )
   
   cruise_counts_temp <- bind_cols(
@@ -227,18 +238,22 @@ cruise_counts %>%
   geom_violin()
 
 
-time_lag_limit <- 5*60^2
+# set time lag to cut cruises
 
-df <- df %>%
+time_lag_limit <- 5*60^2
+print(paste("Choosen time lag [hrs]:", time_lag_limit/60^2))
+
+
+SOCAT_Finn <- SOCAT_Finn %>%
   arrange(date_time) %>%
   mutate(cruise = cumsum(c(TRUE, diff(date_time) >= time_lag_limit)))
 
-cruise_duration <- df %>%
+cruise_duration <- SOCAT_Finn %>%
   group_by(cruise) %>%
   summarise(cruise_duration =
               as.numeric(difftime(max(date_time), min(date_time), units = "hours")))
 
-df <- df %>%
+SOCAT_Finn <- SOCAT_Finn %>%
   group_by(cruise) %>%
   mutate(cruise_duration =
               as.numeric(difftime(max(date_time), min(date_time), units = "hours")))
@@ -248,15 +263,19 @@ cruise_duration %>%
   ggplot(aes(cruise_duration)) +
   geom_histogram()
 
-df %>% 
+SOCAT_Finn %>% 
   ggplot(aes(cruise_duration)) +
   geom_histogram()
 
-df %>% filter(cruise_duration < 10) %>% 
+# filter very short cruises
+cruise_duration_limit <- 2
+print(paste("Cruises shorten than this were removed [hrs]:", cruise_duration_limit))
+
+SOCAT_Finn %>% filter(cruise_duration < cruise_duration_limit) %>% 
   count(cruise)
 
-df <- df %>% 
-  filter(cruise_duration >= 10) %>% 
+SOCAT_Finn <- SOCAT_Finn %>% 
+  filter(cruise_duration >= cruise_duration_limit) %>% 
   select(cruise, date_time, yr, mon, lon, lat, sal, SST, fCO2)
 
 ```
@@ -267,10 +286,7 @@ df <- df %>%
 
 ```{r write_file}
 
-
-# Safe merged data file ---------------------------------------------------
-
-df %>%
+SOCAT_Finn %>%
   write_csv(paste0(path_SOCAT, "SOCATv2021_Baltic_Finnmaid.csv"))
 
 
