@@ -1,0 +1,29 @@
+---
+title: "Read synthesis files"
+author: "Jens Daniel Müller"
+date:  "`r format(Sys.time(), '%d %B, %Y')`"
+output: 
+  workflowr::wflow_html:
+    number_sections: true
+    toc_depth: 3
+    toc_float:
+      collapsed: false
+editor_options:
+  chunk_output_type: console
+---
+
+# Set path
+
+```{r set_path}
+
+
+
+```
+
+
+# Read files
+
+```{r read_files}
+
+```
+
