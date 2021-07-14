@@ -563,16 +563,16 @@ This reproducible <a href="http://rmarkdown.rstudio.com">R Markdown</a> analysis
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomjensdanielmuellerSOCATdataextractiontree6d78d0a996246ccca931c85507158bd23799b401targetblank6d78d0aa"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/jens-daniel-mueller/SOCAT_data_extraction/tree/6d78d0a996246ccca931c85507158bd23799b401" target="_blank">6d78d0a</a> </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomjensdanielmuellerSOCATdataextractiontreed1b240b177e059046f36fca80b7f96c315988aeftargetblankd1b240ba"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/jens-daniel-mueller/SOCAT_data_extraction/tree/d1b240b177e059046f36fca80b7f96c315988aef" target="_blank">d1b240b</a> </a>
 </p>
 </div>
-<div id="strongRepositoryversionstrongahrefhttpsgithubcomjensdanielmuellerSOCATdataextractiontree6d78d0a996246ccca931c85507158bd23799b401targetblank6d78d0aa" class="panel-collapse collapse">
+<div id="strongRepositoryversionstrongahrefhttpsgithubcomjensdanielmuellerSOCATdataextractiontreed1b240b177e059046f36fca80b7f96c315988aeftargetblankd1b240ba" class="panel-collapse collapse">
 <div class="panel-body">
 <p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility.
 </p>
 <p>
-The results in this page were generated with repository version <a href="https://github.com/jens-daniel-mueller/SOCAT_data_extraction/tree/6d78d0a996246ccca931c85507158bd23799b401" target="_blank">6d78d0a</a>. See the <em>Past versions</em> tab to see a history of the changes made to the R Markdown and HTML files.
+The results in this page were generated with repository version <a href="https://github.com/jens-daniel-mueller/SOCAT_data_extraction/tree/d1b240b177e059046f36fca80b7f96c315988aef" target="_blank">d1b240b</a>. See the <em>Past versions</em> tab to see a history of the changes made to the R Markdown and HTML files.
 </p>
 <p>
 Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
@@ -583,10 +583,6 @@ Ignored files:
     Ignored:    .Rproj.user/
     Ignored:    data/
     Ignored:    output/
-
-Unstaged changes:
-    Modified:   analysis/_site.yml
-    Modified:   code/Workflowr_project_managment.R
 
 </code></pre>
 <p>
@@ -625,6 +621,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/jens-daniel-mueller/SOCAT_data_extraction/blob/d1b240b177e059046f36fca80b7f96c315988aef/analysis/exploration_Finnmaid.Rmd" target="_blank">d1b240b</a>
+</td>
+<td>
+jens-daniel-mueller
+</td>
+<td>
+2021-07-14
+</td>
+<td>
+calculated regional time series
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/jens-daniel-mueller/SOCAT_data_extraction/14b501e81501f03ebed692d5b1c5ba65fc6ec639/docs/exploration_Finnmaid.html" target="_blank">14b501e</a>
+</td>
+<td>
+jens-daniel-mueller
+</td>
+<td>
+2021-07-14
+</td>
+<td>
+Build site.
+</td>
+</tr>
 <tr>
 <td>
 Rmd
@@ -717,6 +747,43 @@ cols(
            scale_fill_viridis_c() +
            coord_quickmap(expand = 0)</code></pre>
 <p><img src="figure/exploration_Finnmaid.Rmd/track-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-track-1">
+Past versions of track-1.png
+</button>
+</p>
+<div id="fig-track-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/jens-daniel-mueller/SOCAT_data_extraction/blob/14b501e81501f03ebed692d5b1c5ba65fc6ec639/docs/figure/exploration_Finnmaid.Rmd/track-1.png" target="_blank">14b501e</a>
+</td>
+<td>
+jens-daniel-mueller
+</td>
+<td>
+2021-07-14
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 </div>
 <div id="monthly-climatologies" class="section level1" number="4">
 <h1 number="4"><span class="header-section-number">4</span> Monthly climatologies</h1>
@@ -725,23 +792,126 @@ cols(
 for (i_var in vars) {
   # i_var &lt;- vars[1]
   
+  print(
   df %&gt;%
     ggplot(aes(mon, lat, z = !!sym(i_var))) +
     stat_summary_2d() +
     scale_fill_viridis_c(name = i_var) +
     coord_cartesian(expand = 0)
+  )
+  
 }</code></pre>
+<p><img src="figure/exploration_Finnmaid.Rmd/climatologies-1.png" width="672" style="display: block; margin: auto;" /><img src="figure/exploration_Finnmaid.Rmd/climatologies-2.png" width="672" style="display: block; margin: auto;" /><img src="figure/exploration_Finnmaid.Rmd/climatologies-3.png" width="672" style="display: block; margin: auto;" /></p>
 <div id="regional-time-series" class="section level2" number="4.1">
 <h2 number="4.1"><span class="header-section-number">4.1</span> Regional time series</h2>
+<pre class="r"><code># tag data inside study area to be analyzed
+cruises_G &lt;- df %&gt;%
+  mutate(
+    Area = point.in.polygon(
+      point.x = lon,
+      point.y = lat,
+      pol.x = c(16,20.5,20),
+      pol.y = c(55,57,54)
+    )) %&gt;%  
+  filter(Area == 1) %&gt;% 
+  distinct(cruise) %&gt;% 
+  pull()
+
+cruises_E &lt;- df %&gt;%
+  mutate(
+    Area = point.in.polygon(
+      point.x = lon,
+      point.y = lat,
+      pol.x = c(18,18,19.5,20.5,19),
+      pol.y = c(56,57,58,58,56.5)
+    )) %&gt;%  
+  filter(Area == 1) %&gt;% 
+  distinct(cruise) %&gt;% 
+  pull()
+
+cruises_P &lt;- df %&gt;% 
+  filter(lon &gt; 29) %&gt;% 
+  distinct(cruise) %&gt;% 
+  pull()
+
+df &lt;- df %&gt;% 
+  mutate(route = &quot;W&quot;,
+         route = if_else(cruise %in% cruises_E, &quot;E&quot;, route),
+         route = if_else(cruise %in% cruises_G, &quot;G&quot;, route),
+         route = if_else(cruise %in% cruises_P, &quot;P&quot;, route))
+
+df &lt;- df %&gt;%
+  mutate(lat_grid = as.numeric(as.character(cut(
+    lat, seq(50, 65, 0.1), seq(50.05, 64.95, 0.1)
+  ))),
+  lon_grid = as.numeric(as.character(cut(
+    lon, seq(10, 35, 0.1), seq(10.05, 34.95, 0.1)
+  ))))
+
+df_routes &lt;- df %&gt;% 
+  count(lat_grid, lon_grid, route)
+
+
+df_routes %&gt;%
+  ggplot(aes(lon_grid, lat_grid, fill = route)) +
+           geom_raster() +
+           coord_quickmap(expand = 0) +
+  scale_x_continuous(breaks = seq(10,30,1)) +
+  scale_y_continuous(breaks = seq(50,70,1)) +
+  facet_wrap(~ route)</code></pre>
+<p><img src="figure/exploration_Finnmaid.Rmd/regional_time_series-1.png" width="672" style="display: block; margin: auto;" /></p>
 <pre class="r"><code>df &lt;- df %&gt;% 
   mutate(Area = case_when(
-    Lon&gt;12 &amp; Lon&lt;12.6 ~ &quot;1.MEB&quot;,
-    Lon&gt;13.1 &amp; Lon&lt;14.3 ~ &quot;2.ARK&quot;,
-    Lat&gt;57.5 &amp; Lat&lt;58.5 &amp; route %in% c(&quot;E&quot;, &quot;G&quot;) ~ &quot;4.EGS&quot;,
-    Lat&gt;56.8 &amp; Lat&lt;57.5 &amp; route==&quot;W&quot; ~ &quot;3.WGS&quot;,
-    Lat&gt;58.5 &amp; Lat&lt;59 &amp; Lon&gt;20 ~ &quot;5.NGS&quot;,
-    Lon&gt;22 &amp; Lon&lt;24 ~ &quot;6.WGF&quot;,
-    Lon&gt;24 &amp; Lon&lt;24.5 ~ &quot;7.HGF&quot;))</code></pre>
+    lon&gt;12 &amp; lon&lt;12.6 ~ &quot;1.MEB&quot;,
+    lon&gt;13.1 &amp; lon&lt;14.3 ~ &quot;2.ARK&quot;,
+    lat&gt;57.5 &amp; lat&lt;58.5 &amp; route %in% c(&quot;E&quot;, &quot;G&quot;) ~ &quot;4.EGS&quot;,
+    lat&gt;56.8 &amp; lat&lt;57.5 &amp; route==&quot;W&quot; ~ &quot;3.WGS&quot;,
+    lat&gt;58.5 &amp; lat&lt;59 &amp; lon&gt;20 ~ &quot;5.NGS&quot;,
+    lon&gt;22 &amp; lon&lt;24 ~ &quot;6.WGF&quot;,
+    lon&gt;24 &amp; lon&lt;24.5 ~ &quot;7.HGF&quot;)) %&gt;% 
+  filter(!is.na(Area))
+
+
+df_reg &lt;- df %&gt;% 
+  group_by(Area, cruise) %&gt;% 
+  summarise(date_time = mean(date_time),
+            fCO2 = mean(fCO2),
+            SST = mean(SST),
+            sal = mean(sal)) %&gt;% 
+  ungroup()</code></pre>
+<pre><code>`summarise()` has grouped output by &#39;Area&#39;. You can override using the `.groups` argument.</code></pre>
+<pre class="r"><code>df_reg_long &lt;- df_reg %&gt;% 
+  pivot_longer(fCO2:sal,
+               names_to = &quot;parameter&quot;,
+               values_to = &quot;value&quot;)
+
+df_reg_long %&gt;%
+  group_split(parameter) %&gt;%
+  # head(1) %&gt;% 
+  map(
+    ~ ggplot(data = .x,
+             aes(date_time, value)) +
+      geom_point(size = 0.5) +
+      scale_x_datetime(breaks = &quot;2 years&quot;,
+                       date_labels = &quot;%Y&quot;) +
+      labs(y = unique(.x$parameter)) +
+      facet_grid(Area ~ .)
+  )</code></pre>
+<pre><code>[[1]]</code></pre>
+<p><img src="figure/exploration_Finnmaid.Rmd/regional_time_series-2.png" width="672" style="display: block; margin: auto;" /></p>
+<pre><code>
+[[2]]</code></pre>
+<p><img src="figure/exploration_Finnmaid.Rmd/regional_time_series-3.png" width="672" style="display: block; margin: auto;" /></p>
+<pre><code>
+[[3]]</code></pre>
+<p><img src="figure/exploration_Finnmaid.Rmd/regional_time_series-4.png" width="672" style="display: block; margin: auto;" /></p>
+</div>
+</div>
+<div id="write" class="section level1" number="5">
+<h1 number="5"><span class="header-section-number">5</span> Write</h1>
+<pre class="r"><code>df_reg %&gt;% 
+  select(-cruise) %&gt;% 
+  write_csv(here::here(&quot;data/&quot;, &quot;Baltic_regions_fCO2_time_series.csv&quot;))</code></pre>
 <br>
 <p>
 <button type="button" class="btn btn-default btn-workflowr btn-workflowr-sessioninfo" data-toggle="collapse" data-target="#workflowr-sessioninfo" style="display: block;">
@@ -770,27 +940,27 @@ attached base packages:
 [1] stats     graphics  grDevices utils     datasets  methods   base     
 
 other attached packages:
- [1] forcats_0.5.0   stringr_1.4.0   dplyr_1.0.5     purrr_0.3.4    
- [5] readr_1.4.0     tidyr_1.1.2     tibble_3.0.4    ggplot2_3.3.3  
- [9] tidyverse_1.3.0 workflowr_1.6.2
+ [1] sp_1.4-4        forcats_0.5.0   stringr_1.4.0   dplyr_1.0.5    
+ [5] purrr_0.3.4     readr_1.4.0     tidyr_1.1.2     tibble_3.0.4   
+ [9] ggplot2_3.3.3   tidyverse_1.3.0 workflowr_1.6.2
 
 loaded via a namespace (and not attached):
- [1] tidyselect_1.1.0  xfun_0.18         haven_2.3.1       colorspace_1.4-1 
- [5] vctrs_0.3.5       generics_0.0.2    viridisLite_0.3.0 htmltools_0.5.0  
- [9] yaml_2.2.1        blob_1.2.1        rlang_0.4.10      later_1.1.0.1    
-[13] pillar_1.4.7      withr_2.3.0       glue_1.4.2        DBI_1.1.0        
-[17] dbplyr_1.4.4      readxl_1.3.1      modelr_0.1.8      lifecycle_1.0.0  
-[21] cellranger_1.1.0  munsell_0.5.0     gtable_0.3.0      rvest_0.3.6      
-[25] evaluate_0.14     labeling_0.4.2    knitr_1.30        httpuv_1.5.4     
-[29] fansi_0.4.1       broom_0.7.5       Rcpp_1.0.5        promises_1.1.1   
-[33] backports_1.1.10  scales_1.1.1      jsonlite_1.7.1    farver_2.0.3     
-[37] fs_1.5.0          hms_0.5.3         digest_0.6.27     stringi_1.5.3    
-[41] rprojroot_2.0.2   grid_4.0.3        cli_2.1.0         tools_4.0.3      
-[45] magrittr_1.5      crayon_1.3.4      whisker_0.4       pkgconfig_2.0.3  
-[49] ellipsis_0.3.1    xml2_1.3.2        reprex_0.3.0      lubridate_1.7.9  
-[53] assertthat_0.2.1  rmarkdown_2.5     httr_1.4.2        rstudioapi_0.11  
-[57] R6_2.5.0          git2r_0.27.1      compiler_4.0.3   </code></pre>
-</div>
+ [1] Rcpp_1.0.5        here_0.1          lubridate_1.7.9   lattice_0.20-41  
+ [5] assertthat_0.2.1  rprojroot_2.0.2   digest_0.6.27     R6_2.5.0         
+ [9] cellranger_1.1.0  backports_1.1.10  reprex_0.3.0      evaluate_0.14    
+[13] httr_1.4.2        pillar_1.4.7      rlang_0.4.10      readxl_1.3.1     
+[17] rstudioapi_0.11   whisker_0.4       blob_1.2.1        rmarkdown_2.5    
+[21] labeling_0.4.2    munsell_0.5.0     broom_0.7.5       compiler_4.0.3   
+[25] httpuv_1.5.4      modelr_0.1.8      xfun_0.18         pkgconfig_2.0.3  
+[29] htmltools_0.5.0   tidyselect_1.1.0  fansi_0.4.1       viridisLite_0.3.0
+[33] crayon_1.3.4      dbplyr_1.4.4      withr_2.3.0       later_1.1.0.1    
+[37] grid_4.0.3        jsonlite_1.7.1    gtable_0.3.0      lifecycle_1.0.0  
+[41] DBI_1.1.0         git2r_0.27.1      magrittr_1.5      scales_1.1.1     
+[45] cli_2.1.0         stringi_1.5.3     farver_2.0.3      fs_1.5.0         
+[49] promises_1.1.1    xml2_1.3.2        ellipsis_0.3.1    generics_0.0.2   
+[53] vctrs_0.3.5       tools_4.0.3       glue_1.4.2        hms_0.5.3        
+[57] yaml_2.2.1        colorspace_1.4-1  rvest_0.3.6       knitr_1.30       
+[61] haven_2.3.1      </code></pre>
 </div>
 </div>
 
