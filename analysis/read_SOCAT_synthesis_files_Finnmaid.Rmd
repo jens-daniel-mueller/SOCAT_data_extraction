@@ -32,7 +32,7 @@ print(path_SOCAT)
 
 # Read files
 
-```{r read_files, eval=FALSE}
+```{r read_files}
 
 file_all <- "SOCATv2021.tsv"
 file_FlagE <- "SOCATv2021_FlagE.tsv"
@@ -114,9 +114,9 @@ df <- df %>%
 
 df %>% 
   filter(lat > 59, lat < 59.05) %>% 
-  ggplot(aes(date_time, fCO2, fill=SST))+
+  ggplot(aes(date_time, fCO2, col=SST))+
   geom_point()+
-  scale_color_brewer(palette = "Set1", name="")+
+  scale_color_viridis_c()+
   labs(x="", y="fCO2", title = "Finnpartner / Finnmaid data",
       subtitle = "Subsets from SOCATv2021 incl Flag E  | Lat range: 59-59.05N")+
   theme_bw()
