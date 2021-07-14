@@ -563,16 +563,16 @@ This reproducible <a href="http://rmarkdown.rstudio.com">R Markdown</a> analysis
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomjensdanielmuellerSOCATdataextractiontreeabe14a9689c355d70f1488c817a404872fc922aatargetblankabe14a9a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/jens-daniel-mueller/SOCAT_data_extraction/tree/abe14a9689c355d70f1488c817a404872fc922aa" target="_blank">abe14a9</a> </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomjensdanielmuellerSOCATdataextractiontree6d78d0a996246ccca931c85507158bd23799b401targetblank6d78d0aa"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/jens-daniel-mueller/SOCAT_data_extraction/tree/6d78d0a996246ccca931c85507158bd23799b401" target="_blank">6d78d0a</a> </a>
 </p>
 </div>
-<div id="strongRepositoryversionstrongahrefhttpsgithubcomjensdanielmuellerSOCATdataextractiontreeabe14a9689c355d70f1488c817a404872fc922aatargetblankabe14a9a" class="panel-collapse collapse">
+<div id="strongRepositoryversionstrongahrefhttpsgithubcomjensdanielmuellerSOCATdataextractiontree6d78d0a996246ccca931c85507158bd23799b401targetblank6d78d0aa" class="panel-collapse collapse">
 <div class="panel-body">
 <p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility.
 </p>
 <p>
-The results in this page were generated with repository version <a href="https://github.com/jens-daniel-mueller/SOCAT_data_extraction/tree/abe14a9689c355d70f1488c817a404872fc922aa" target="_blank">abe14a9</a>. See the <em>Past versions</em> tab to see a history of the changes made to the R Markdown and HTML files.
+The results in this page were generated with repository version <a href="https://github.com/jens-daniel-mueller/SOCAT_data_extraction/tree/6d78d0a996246ccca931c85507158bd23799b401" target="_blank">6d78d0a</a>. See the <em>Past versions</em> tab to see a history of the changes made to the R Markdown and HTML files.
 </p>
 <p>
 Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
@@ -625,6 +625,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/jens-daniel-mueller/SOCAT_data_extraction/blob/6d78d0a996246ccca931c85507158bd23799b401/analysis/read_SOCAT_synthesis_files_Finnmaid.Rmd" target="_blank">6d78d0a</a>
+</td>
+<td>
+jens-daniel-mueller
+</td>
+<td>
+2021-07-14
+</td>
+<td>
+read finnmaid data
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/jens-daniel-mueller/SOCAT_data_extraction/c859187b5358c4013b2b152f75ffffbed0efc869/docs/read_SOCAT_synthesis_files_Finnmaid.html" target="_blank">c859187</a>
+</td>
+<td>
+jens-daniel-mueller
+</td>
+<td>
+2021-07-14
+</td>
+<td>
+Build site.
+</td>
+</tr>
 <tr>
 <td>
 html
@@ -726,7 +760,6 @@ XXX
 <pre><code>── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
 x dplyr::filter() masks stats::filter()
 x dplyr::lag()    masks stats::lag()</code></pre>
-<pre class="r"><code>library(geosphere)</code></pre>
 <div id="set-path" class="section level1" number="1">
 <h1 number="1"><span class="header-section-number">1</span> Set path</h1>
 <pre class="r"><code>path_SOCAT &lt;- &quot;/nfs/kryo/work/updata/SOCAT/&quot;
@@ -922,6 +955,356 @@ jens-daniel-mueller
 </table>
 </div>
 </div>
+</div>
+<div id="identify-cruises" class="section level1" number="3">
+<h1 number="3"><span class="header-section-number">3</span> Identify cruises</h1>
+<pre class="r"><code># time_lag_limit &lt;- 60*60*10
+
+for (time_lag_limit in seq(0.2, 20, 0.1)*60^2) {
+  
+  print(time_lag_limit/60^2)
+  
+  df &lt;- df %&gt;%
+  arrange(date_time) %&gt;%
+  mutate(cruise = cumsum(c(TRUE, diff(date_time) &gt;= time_lag_limit)))
+  
+  cruise_duration &lt;- df %&gt;% 
+    group_by(cruise) %&gt;% 
+    summarise(cruise_duration = 
+                as.numeric(difftime(max(date_time), min(date_time), units = &quot;hours&quot;))) %&gt;% 
+    summarise(min_duration = min(cruise_duration),
+              max_duration = max(cruise_duration))
+
+  cruise_counts_temp &lt;- bind_cols( 
+  time_lag_limit = time_lag_limit/60^2,
+  n_cruises = max(df$cruise)
+  )
+  
+  cruise_counts_temp &lt;- bind_cols(
+    cruise_counts_temp,
+    cruise_duration
+  )
+  
+  if (exists(&quot;cruise_counts&quot;)) {
+    cruise_counts &lt;- bind_rows(cruise_counts, cruise_counts_temp)
+  }
+  
+  if (!exists(&quot;cruise_counts&quot;)) {
+    cruise_counts &lt;- cruise_counts_temp
+  }
+
+  
+}</code></pre>
+<pre><code>[1] 0.2
+[1] 0.3
+[1] 0.4
+[1] 0.5
+[1] 0.6
+[1] 0.7
+[1] 0.8
+[1] 0.9
+[1] 1
+[1] 1.1
+[1] 1.2
+[1] 1.3
+[1] 1.4
+[1] 1.5
+[1] 1.6
+[1] 1.7
+[1] 1.8
+[1] 1.9
+[1] 2
+[1] 2.1
+[1] 2.2
+[1] 2.3
+[1] 2.4
+[1] 2.5
+[1] 2.6
+[1] 2.7
+[1] 2.8
+[1] 2.9
+[1] 3
+[1] 3.1
+[1] 3.2
+[1] 3.3
+[1] 3.4
+[1] 3.5
+[1] 3.6
+[1] 3.7
+[1] 3.8
+[1] 3.9
+[1] 4
+[1] 4.1
+[1] 4.2
+[1] 4.3
+[1] 4.4
+[1] 4.5
+[1] 4.6
+[1] 4.7
+[1] 4.8
+[1] 4.9
+[1] 5
+[1] 5.1
+[1] 5.2
+[1] 5.3
+[1] 5.4
+[1] 5.5
+[1] 5.6
+[1] 5.7
+[1] 5.8
+[1] 5.9
+[1] 6
+[1] 6.1
+[1] 6.2
+[1] 6.3
+[1] 6.4
+[1] 6.5
+[1] 6.6
+[1] 6.7
+[1] 6.8
+[1] 6.9
+[1] 7
+[1] 7.1
+[1] 7.2
+[1] 7.3
+[1] 7.4
+[1] 7.5
+[1] 7.6
+[1] 7.7
+[1] 7.8
+[1] 7.9
+[1] 8
+[1] 8.1
+[1] 8.2
+[1] 8.3
+[1] 8.4
+[1] 8.5
+[1] 8.6
+[1] 8.7
+[1] 8.8
+[1] 8.9
+[1] 9
+[1] 9.1
+[1] 9.2
+[1] 9.3
+[1] 9.4
+[1] 9.5
+[1] 9.6
+[1] 9.7
+[1] 9.8
+[1] 9.9
+[1] 10
+[1] 10.1
+[1] 10.2
+[1] 10.3
+[1] 10.4
+[1] 10.5
+[1] 10.6
+[1] 10.7
+[1] 10.8
+[1] 10.9
+[1] 11
+[1] 11.1
+[1] 11.2
+[1] 11.3
+[1] 11.4
+[1] 11.5
+[1] 11.6
+[1] 11.7
+[1] 11.8
+[1] 11.9
+[1] 12
+[1] 12.1
+[1] 12.2
+[1] 12.3
+[1] 12.4
+[1] 12.5
+[1] 12.6
+[1] 12.7
+[1] 12.8
+[1] 12.9
+[1] 13
+[1] 13.1
+[1] 13.2
+[1] 13.3
+[1] 13.4
+[1] 13.5
+[1] 13.6
+[1] 13.7
+[1] 13.8
+[1] 13.9
+[1] 14
+[1] 14.1
+[1] 14.2
+[1] 14.3
+[1] 14.4
+[1] 14.5
+[1] 14.6
+[1] 14.7
+[1] 14.8
+[1] 14.9
+[1] 15
+[1] 15.1
+[1] 15.2
+[1] 15.3
+[1] 15.4
+[1] 15.5
+[1] 15.6
+[1] 15.7
+[1] 15.8
+[1] 15.9
+[1] 16
+[1] 16.1
+[1] 16.2
+[1] 16.3
+[1] 16.4
+[1] 16.5
+[1] 16.6
+[1] 16.7
+[1] 16.8
+[1] 16.9
+[1] 17
+[1] 17.1
+[1] 17.2
+[1] 17.3
+[1] 17.4
+[1] 17.5
+[1] 17.6
+[1] 17.7
+[1] 17.8
+[1] 17.9
+[1] 18
+[1] 18.1
+[1] 18.2
+[1] 18.3
+[1] 18.4
+[1] 18.5
+[1] 18.6
+[1] 18.7
+[1] 18.8
+[1] 18.9
+[1] 19
+[1] 19.1
+[1] 19.2
+[1] 19.3
+[1] 19.4
+[1] 19.5
+[1] 19.6
+[1] 19.7
+[1] 19.8
+[1] 19.9
+[1] 20</code></pre>
+<pre class="r"><code>cruise_counts %&gt;% 
+  ggplot(aes(time_lag_limit, n_cruises)) +
+  geom_path() +
+  geom_point()</code></pre>
+<p><img src="figure/read_SOCAT_synthesis_files_Finnmaid.Rmd/cruise_identification-1.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>cruise_counts %&gt;% 
+  ggplot(aes(time_lag_limit, max_duration)) +
+  geom_path() +
+  geom_point() +
+  coord_cartesian(ylim = c(0,100))</code></pre>
+<p><img src="figure/read_SOCAT_synthesis_files_Finnmaid.Rmd/cruise_identification-2.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>cruise_counts %&gt;%
+  ggplot(aes(time_lag_limit, min_duration)) +
+  geom_path() +
+  geom_point() +
+  coord_cartesian(ylim = c(0, 1))</code></pre>
+<p><img src="figure/read_SOCAT_synthesis_files_Finnmaid.Rmd/cruise_identification-3.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>rm(cruise_counts, cruise_counts_temp, cruise_duration)
+
+
+for (time_lag_limit in seq(2, 8, 2)*60^2) {
+  
+  print(time_lag_limit/60^2)
+  
+  df &lt;- df %&gt;%
+  arrange(date_time) %&gt;%
+  mutate(cruise = cumsum(c(TRUE, diff(date_time) &gt;= time_lag_limit)))
+  
+  cruise_duration &lt;- df %&gt;% 
+    group_by(cruise) %&gt;% 
+    summarise(cruise_duration = 
+                as.numeric(difftime(max(date_time), min(date_time), units = &quot;hours&quot;)))
+
+  cruise_counts_temp &lt;- bind_cols( 
+  time_lag_limit = time_lag_limit/60^2,
+  n_cruises = max(df$cruise)
+  )
+  
+  cruise_counts_temp &lt;- bind_cols(
+    cruise_counts_temp,
+    cruise_duration
+  )
+  
+  if (exists(&quot;cruise_counts&quot;)) {
+    cruise_counts &lt;- bind_rows(cruise_counts, cruise_counts_temp)
+  }
+  
+  if (!exists(&quot;cruise_counts&quot;)) {
+    cruise_counts &lt;- cruise_counts_temp
+  }
+
+  
+}</code></pre>
+<pre><code>[1] 2
+[1] 4
+[1] 6
+[1] 8</code></pre>
+<pre class="r"><code>cruise_counts %&gt;% 
+  ggplot(aes(as.factor(time_lag_limit), cruise_duration)) +
+  geom_violin()</code></pre>
+<p><img src="figure/read_SOCAT_synthesis_files_Finnmaid.Rmd/cruise_identification-4.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>time_lag_limit &lt;- 5*60^2
+
+df &lt;- df %&gt;%
+  arrange(date_time) %&gt;%
+  mutate(cruise = cumsum(c(TRUE, diff(date_time) &gt;= time_lag_limit)))
+
+cruise_duration &lt;- df %&gt;%
+  group_by(cruise) %&gt;%
+  summarise(cruise_duration =
+              as.numeric(difftime(max(date_time), min(date_time), units = &quot;hours&quot;)))
+
+df &lt;- df %&gt;%
+  group_by(cruise) %&gt;%
+  mutate(cruise_duration =
+              as.numeric(difftime(max(date_time), min(date_time), units = &quot;hours&quot;)))
+
+
+cruise_duration %&gt;% 
+  ggplot(aes(cruise_duration)) +
+  geom_histogram()</code></pre>
+<pre><code>`stat_bin()` using `bins = 30`. Pick better value with `binwidth`.</code></pre>
+<p><img src="figure/read_SOCAT_synthesis_files_Finnmaid.Rmd/cruise_identification-5.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>df %&gt;% 
+  ggplot(aes(cruise_duration)) +
+  geom_histogram()</code></pre>
+<pre><code>`stat_bin()` using `bins = 30`. Pick better value with `binwidth`.</code></pre>
+<p><img src="figure/read_SOCAT_synthesis_files_Finnmaid.Rmd/cruise_identification-6.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>df %&gt;% filter(cruise_duration &lt; 10) %&gt;% 
+  count(cruise)</code></pre>
+<pre><code># A tibble: 23 x 2
+# Groups:   cruise [23]
+   cruise     n
+    &lt;int&gt; &lt;int&gt;
+ 1    151   557
+ 2    223   496
+ 3    304   509
+ 4    322     2
+ 5    368   483
+ 6    477   450
+ 7    791   505
+ 8    955     1
+ 9    988     1
+10   1029   599
+# … with 13 more rows</code></pre>
+<pre class="r"><code>df &lt;- df %&gt;% 
+  filter(cruise_duration &gt;= 10) %&gt;% 
+  select(cruise, date_time, yr, mon, lon, lat, sal, SST, fCO2)</code></pre>
+</div>
+<div id="write-summary-file" class="section level1" number="4">
+<h1 number="4"><span class="header-section-number">4</span> Write summary file</h1>
 <pre class="r"><code># Safe merged data file ---------------------------------------------------
 
 df %&gt;%
@@ -954,13 +1337,13 @@ attached base packages:
 [1] stats     graphics  grDevices utils     datasets  methods   base     
 
 other attached packages:
- [1] geosphere_1.5-10 forcats_0.5.0    stringr_1.4.0    dplyr_1.0.5     
- [5] purrr_0.3.4      readr_1.4.0      tidyr_1.1.2      tibble_3.0.4    
- [9] ggplot2_3.3.3    tidyverse_1.3.0  workflowr_1.6.2 
+ [1] forcats_0.5.0   stringr_1.4.0   dplyr_1.0.5     purrr_0.3.4    
+ [5] readr_1.4.0     tidyr_1.1.2     tibble_3.0.4    ggplot2_3.3.3  
+ [9] tidyverse_1.3.0 workflowr_1.6.2
 
 loaded via a namespace (and not attached):
- [1] Rcpp_1.0.5        lubridate_1.7.9   lattice_0.20-41   assertthat_0.2.1 
- [5] rprojroot_2.0.2   digest_0.6.27     R6_2.5.0          cellranger_1.1.0 
+ [1] Rcpp_1.0.5        lubridate_1.7.9   assertthat_0.2.1  rprojroot_2.0.2  
+ [5] digest_0.6.27     utf8_1.1.4        R6_2.5.0          cellranger_1.1.0 
  [9] backports_1.1.10  reprex_0.3.0      evaluate_0.14     httr_1.4.2       
 [13] pillar_1.4.7      rlang_0.4.10      readxl_1.3.1      rstudioapi_0.11  
 [17] whisker_0.4       blob_1.2.1        rmarkdown_2.5     labeling_0.4.2   
@@ -971,10 +1354,9 @@ loaded via a namespace (and not attached):
 [37] jsonlite_1.7.1    gtable_0.3.0      lifecycle_1.0.0   DBI_1.1.0        
 [41] git2r_0.27.1      magrittr_1.5      scales_1.1.1      cli_2.1.0        
 [45] stringi_1.5.3     farver_2.0.3      fs_1.5.0          promises_1.1.1   
-[49] sp_1.4-4          xml2_1.3.2        ellipsis_0.3.1    generics_0.0.2   
-[53] vctrs_0.3.5       tools_4.0.3       glue_1.4.2        hms_0.5.3        
-[57] yaml_2.2.1        colorspace_1.4-1  rvest_0.3.6       knitr_1.30       
-[61] haven_2.3.1      </code></pre>
+[49] xml2_1.3.2        ellipsis_0.3.1    generics_0.0.2    vctrs_0.3.5      
+[53] tools_4.0.3       glue_1.4.2        hms_0.5.3         yaml_2.2.1       
+[57] colorspace_1.4-1  rvest_0.3.6       knitr_1.30        haven_2.3.1      </code></pre>
 </div>
 </div>
 
