@@ -563,16 +563,16 @@ This reproducible <a href="http://rmarkdown.rstudio.com">R Markdown</a> analysis
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomjensdanielmuellerSOCATdataextractiontreed1b240b177e059046f36fca80b7f96c315988aeftargetblankd1b240ba"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/jens-daniel-mueller/SOCAT_data_extraction/tree/d1b240b177e059046f36fca80b7f96c315988aef" target="_blank">d1b240b</a> </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomjensdanielmuellerSOCATdataextractiontree6291613dc78dbed02108c28ad01e97cd40fa48c0targetblank6291613a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/jens-daniel-mueller/SOCAT_data_extraction/tree/6291613dc78dbed02108c28ad01e97cd40fa48c0" target="_blank">6291613</a> </a>
 </p>
 </div>
-<div id="strongRepositoryversionstrongahrefhttpsgithubcomjensdanielmuellerSOCATdataextractiontreed1b240b177e059046f36fca80b7f96c315988aeftargetblankd1b240ba" class="panel-collapse collapse">
+<div id="strongRepositoryversionstrongahrefhttpsgithubcomjensdanielmuellerSOCATdataextractiontree6291613dc78dbed02108c28ad01e97cd40fa48c0targetblank6291613a" class="panel-collapse collapse">
 <div class="panel-body">
 <p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility.
 </p>
 <p>
-The results in this page were generated with repository version <a href="https://github.com/jens-daniel-mueller/SOCAT_data_extraction/tree/d1b240b177e059046f36fca80b7f96c315988aef" target="_blank">d1b240b</a>. See the <em>Past versions</em> tab to see a history of the changes made to the R Markdown and HTML files.
+The results in this page were generated with repository version <a href="https://github.com/jens-daniel-mueller/SOCAT_data_extraction/tree/6291613dc78dbed02108c28ad01e97cd40fa48c0" target="_blank">6291613</a>. See the <em>Past versions</em> tab to see a history of the changes made to the R Markdown and HTML files.
 </p>
 <p>
 Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
@@ -621,6 +621,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/jens-daniel-mueller/SOCAT_data_extraction/blob/6291613dc78dbed02108c28ad01e97cd40fa48c0/analysis/exploration_Finnmaid.Rmd" target="_blank">6291613</a>
+</td>
+<td>
+jens-daniel-mueller
+</td>
+<td>
+2021-07-14
+</td>
+<td>
+clean up scripts
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/jens-daniel-mueller/SOCAT_data_extraction/1fcacc4ba088d818def1c129211b2daa02f83b0e/docs/exploration_Finnmaid.html" target="_blank">1fcacc4</a>
+</td>
+<td>
+jens-daniel-mueller
+</td>
+<td>
+2021-07-14
+</td>
+<td>
+Build site.
+</td>
+</tr>
 <tr>
 <td>
 Rmd
@@ -721,7 +755,7 @@ print(path_SOCAT)</code></pre>
 </div>
 <div id="read-files" class="section level1" number="2">
 <h1 number="2"><span class="header-section-number">2</span> Read files</h1>
-<pre class="r"><code>df &lt;-
+<pre class="r"><code>SOCAT_Finn &lt;-
   read_csv(paste0(path_SOCAT, &quot;SOCATv2021_Baltic_Finnmaid.csv&quot;))</code></pre>
 <pre><code>
 ── Column specification ────────────────────────────────────────────────────────
@@ -736,23 +770,54 @@ cols(
   SST = col_double(),
   fCO2 = col_double()
 )</code></pre>
-<pre class="r"><code>df &lt;- df %&gt;% 
+<pre class="r"><code>SOCAT_Finn &lt;- SOCAT_Finn %&gt;% 
   drop_na()</code></pre>
 </div>
 <div id="track" class="section level1" number="3">
 <h1 number="3"><span class="header-section-number">3</span> Track</h1>
-<pre class="r"><code>df %&gt;%
-  ggplot(aes(lon, lat)) +
-           geom_bin2d(binwidth = 0.1) +
-           scale_fill_viridis_c() +
-           coord_quickmap(expand = 0)</code></pre>
-<p><img src="figure/exploration_Finnmaid.Rmd/track-1.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>baltic_map &lt;-
+  ggplot(data = map_data(&quot;world&quot;),
+         aes(x = long, y = lat)) +
+  geom_polygon(aes(group = group), fill = &quot;grey80&quot;, colour = &quot;black&quot;) +
+  coord_map(&quot;ortho&quot;, xlim = c(11, 29), ylim = c(54, 61))
+
+baltic_map &lt;-
+ggplot(data = map_data(&quot;world&quot;),
+         aes(x = long, y = lat)) +
+  geom_polygon(aes(group = group), fill = &quot;grey80&quot;, colour = &quot;black&quot;) +
+  coord_quickmap(xlim = c(11, 29), ylim = c(54, 61))
+
+baltic_map +
+  geom_bin2d(data = SOCAT_Finn,
+             aes(lon, lat),
+             binwidth = 0.1) +
+  scale_fill_viridis_c() +
+  labs(title = &quot;Observations on 0.1° x 0.1° grid&quot;)</code></pre>
+<p><img src="figure/exploration_Finnmaid.Rmd/track_map-1.png" width="672" style="display: block; margin: auto;" /></p>
+</div>
+<div id="monthly-climatologies" class="section level1" number="4">
+<h1 number="4"><span class="header-section-number">4</span> Monthly climatologies</h1>
+<pre class="r"><code>vars &lt;- c(&quot;fCO2&quot;, &quot;SST&quot;, &quot;sal&quot;)
+
+for (i_var in vars) {
+  # i_var &lt;- vars[1]
+  
+  print(
+  SOCAT_Finn %&gt;%
+    ggplot(aes(mon, lat, z = !!sym(i_var))) +
+    stat_summary_2d() +
+    scale_fill_viridis_c(name = i_var) +
+    coord_cartesian(expand = 0)
+  )
+  
+}</code></pre>
+<p><img src="figure/exploration_Finnmaid.Rmd/climatologies-1.png" width="672" style="display: block; margin: auto;" /></p>
 <p>
-<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-track-1">
-Past versions of track-1.png
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-climatologies-1">
+Past versions of climatologies-1.png
 </button>
 </p>
-<div id="fig-track-1" class="collapse">
+<div id="fig-climatologies-1" class="collapse">
 <div class="table-responsive">
 <table class="table table-condensed table-hover">
 <thead>
@@ -771,7 +836,83 @@ Date
 <tbody>
 <tr>
 <td>
-<a href="https://github.com/jens-daniel-mueller/SOCAT_data_extraction/blob/14b501e81501f03ebed692d5b1c5ba65fc6ec639/docs/figure/exploration_Finnmaid.Rmd/track-1.png" target="_blank">14b501e</a>
+<a href="https://github.com/jens-daniel-mueller/SOCAT_data_extraction/blob/1fcacc4ba088d818def1c129211b2daa02f83b0e/docs/figure/exploration_Finnmaid.Rmd/climatologies-1.png" target="_blank">1fcacc4</a>
+</td>
+<td>
+jens-daniel-mueller
+</td>
+<td>
+2021-07-14
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p><img src="figure/exploration_Finnmaid.Rmd/climatologies-2.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-climatologies-2">
+Past versions of climatologies-2.png
+</button>
+</p>
+<div id="fig-climatologies-2" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/jens-daniel-mueller/SOCAT_data_extraction/blob/1fcacc4ba088d818def1c129211b2daa02f83b0e/docs/figure/exploration_Finnmaid.Rmd/climatologies-2.png" target="_blank">1fcacc4</a>
+</td>
+<td>
+jens-daniel-mueller
+</td>
+<td>
+2021-07-14
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p><img src="figure/exploration_Finnmaid.Rmd/climatologies-3.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-climatologies-3">
+Past versions of climatologies-3.png
+</button>
+</p>
+<div id="fig-climatologies-3" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/jens-daniel-mueller/SOCAT_data_extraction/blob/1fcacc4ba088d818def1c129211b2daa02f83b0e/docs/figure/exploration_Finnmaid.Rmd/climatologies-3.png" target="_blank">1fcacc4</a>
 </td>
 <td>
 jens-daniel-mueller
@@ -785,62 +926,51 @@ jens-daniel-mueller
 </div>
 </div>
 </div>
-<div id="monthly-climatologies" class="section level1" number="4">
-<h1 number="4"><span class="header-section-number">4</span> Monthly climatologies</h1>
-<pre class="r"><code>vars &lt;- c(&quot;fCO2&quot;, &quot;SST&quot;, &quot;sal&quot;)
-
-for (i_var in vars) {
-  # i_var &lt;- vars[1]
-  
-  print(
-  df %&gt;%
-    ggplot(aes(mon, lat, z = !!sym(i_var))) +
-    stat_summary_2d() +
-    scale_fill_viridis_c(name = i_var) +
-    coord_cartesian(expand = 0)
-  )
-  
-}</code></pre>
-<p><img src="figure/exploration_Finnmaid.Rmd/climatologies-1.png" width="672" style="display: block; margin: auto;" /><img src="figure/exploration_Finnmaid.Rmd/climatologies-2.png" width="672" style="display: block; margin: auto;" /><img src="figure/exploration_Finnmaid.Rmd/climatologies-3.png" width="672" style="display: block; margin: auto;" /></p>
-<div id="regional-time-series" class="section level2" number="4.1">
-<h2 number="4.1"><span class="header-section-number">4.1</span> Regional time series</h2>
-<pre class="r"><code># tag data inside study area to be analyzed
-cruises_G &lt;- df %&gt;%
+<div id="regional-time-series" class="section level1" number="5">
+<h1 number="5"><span class="header-section-number">5</span> Regional time series</h1>
+<div id="determine-routes" class="section level2" number="5.1">
+<h2 number="5.1"><span class="header-section-number">5.1</span> Determine routes</h2>
+<pre class="r"><code># determine cruises on Gydnia (G) route
+cruises_G &lt;- SOCAT_Finn %&gt;%
   mutate(
-    Area = point.in.polygon(
+    region = point.in.polygon(
       point.x = lon,
       point.y = lat,
       pol.x = c(16,20.5,20),
       pol.y = c(55,57,54)
     )) %&gt;%  
-  filter(Area == 1) %&gt;% 
+  filter(region == 1) %&gt;% 
   distinct(cruise) %&gt;% 
   pull()
 
-cruises_E &lt;- df %&gt;%
+# determine cruises on Eastern (E) route around Gotland
+cruises_E &lt;- SOCAT_Finn %&gt;%
   mutate(
-    Area = point.in.polygon(
+    region = point.in.polygon(
       point.x = lon,
       point.y = lat,
       pol.x = c(18,18,19.5,20.5,19),
       pol.y = c(56,57,58,58,56.5)
     )) %&gt;%  
-  filter(Area == 1) %&gt;% 
+  filter(region == 1) %&gt;% 
   distinct(cruise) %&gt;% 
   pull()
 
-cruises_P &lt;- df %&gt;% 
+# determine cruises to St. Petersburg (P)
+cruises_P &lt;- SOCAT_Finn %&gt;% 
   filter(lon &gt; 29) %&gt;% 
   distinct(cruise) %&gt;% 
   pull()
 
-df &lt;- df %&gt;% 
+# assign route labels
+SOCAT_Finn &lt;- SOCAT_Finn %&gt;% 
   mutate(route = &quot;W&quot;,
          route = if_else(cruise %in% cruises_E, &quot;E&quot;, route),
          route = if_else(cruise %in% cruises_G, &quot;G&quot;, route),
          route = if_else(cruise %in% cruises_P, &quot;P&quot;, route))
 
-df &lt;- df %&gt;%
+# cut into lat lon grid
+SOCAT_Finn &lt;- SOCAT_Finn %&gt;%
   mutate(lat_grid = as.numeric(as.character(cut(
     lat, seq(50, 65, 0.1), seq(50.05, 64.95, 0.1)
   ))),
@@ -848,20 +978,22 @@ df &lt;- df %&gt;%
     lon, seq(10, 35, 0.1), seq(10.05, 34.95, 0.1)
   ))))
 
-df_routes &lt;- df %&gt;% 
+SOCAT_Finn_routes &lt;- SOCAT_Finn %&gt;% 
   count(lat_grid, lon_grid, route)
 
-
-df_routes %&gt;%
-  ggplot(aes(lon_grid, lat_grid, fill = route)) +
-           geom_raster() +
-           coord_quickmap(expand = 0) +
-  scale_x_continuous(breaks = seq(10,30,1)) +
-  scale_y_continuous(breaks = seq(50,70,1)) +
-  facet_wrap(~ route)</code></pre>
-<p><img src="figure/exploration_Finnmaid.Rmd/regional_time_series-1.png" width="672" style="display: block; margin: auto;" /></p>
-<pre class="r"><code>df &lt;- df %&gt;% 
-  mutate(Area = case_when(
+baltic_map +
+  geom_raster(data = SOCAT_Finn_routes %&gt;% select(-route),
+              aes(lon_grid, lat_grid), fill = &quot;grey80&quot;) +
+  geom_raster(data = SOCAT_Finn_routes,
+              aes(lon_grid, lat_grid), fill = &quot;red&quot;) +
+  facet_wrap( ~ route)</code></pre>
+<p><img src="figure/exploration_Finnmaid.Rmd/route_determination-1.png" width="672" style="display: block; margin: auto;" /></p>
+</div>
+<div id="assign-region" class="section level2" number="5.2">
+<h2 number="5.2"><span class="header-section-number">5.2</span> Assign region</h2>
+<pre class="r"><code># Assign regions according to Schneider and Müller (2018)
+SOCAT_Finn &lt;- SOCAT_Finn %&gt;% 
+  mutate(region = case_when(
     lon&gt;12 &amp; lon&lt;12.6 ~ &quot;1.MEB&quot;,
     lon&gt;13.1 &amp; lon&lt;14.3 ~ &quot;2.ARK&quot;,
     lat&gt;57.5 &amp; lat&lt;58.5 &amp; route %in% c(&quot;E&quot;, &quot;G&quot;) ~ &quot;4.EGS&quot;,
@@ -869,25 +1001,29 @@ df_routes %&gt;%
     lat&gt;58.5 &amp; lat&lt;59 &amp; lon&gt;20 ~ &quot;5.NGS&quot;,
     lon&gt;22 &amp; lon&lt;24 ~ &quot;6.WGF&quot;,
     lon&gt;24 &amp; lon&lt;24.5 ~ &quot;7.HGF&quot;)) %&gt;% 
-  filter(!is.na(Area))
-
-
-df_reg &lt;- df %&gt;% 
-  group_by(Area, cruise) %&gt;% 
+  filter(!is.na(region))</code></pre>
+</div>
+<div id="plot-time-series" class="section level2" number="5.3">
+<h2 number="5.3"><span class="header-section-number">5.3</span> Plot time series</h2>
+<pre class="r"><code># calculate mean values for each crossing of each region
+SOCAT_Finn_region &lt;- SOCAT_Finn %&gt;% 
+  group_by(region, cruise) %&gt;% 
   summarise(date_time = mean(date_time),
             fCO2 = mean(fCO2),
             SST = mean(SST),
             sal = mean(sal)) %&gt;% 
   ungroup()</code></pre>
-<pre><code>`summarise()` has grouped output by &#39;Area&#39;. You can override using the `.groups` argument.</code></pre>
-<pre class="r"><code>df_reg_long &lt;- df_reg %&gt;% 
+<pre><code>`summarise()` has grouped output by &#39;region&#39;. You can override using the `.groups` argument.</code></pre>
+<pre class="r"><code># convert to long format
+SOCAT_Finn_region_long &lt;- SOCAT_Finn_region %&gt;% 
   pivot_longer(fCO2:sal,
                names_to = &quot;parameter&quot;,
                values_to = &quot;value&quot;)
 
-df_reg_long %&gt;%
+# plot time series
+SOCAT_Finn_region_long %&gt;%
   group_split(parameter) %&gt;%
-  # head(1) %&gt;% 
+  # head(1) %&gt;%
   map(
     ~ ggplot(data = .x,
              aes(date_time, value)) +
@@ -895,21 +1031,132 @@ df_reg_long %&gt;%
       scale_x_datetime(breaks = &quot;2 years&quot;,
                        date_labels = &quot;%Y&quot;) +
       labs(y = unique(.x$parameter)) +
-      facet_grid(Area ~ .)
+      facet_grid(region ~ .)
   )</code></pre>
 <pre><code>[[1]]</code></pre>
-<p><img src="figure/exploration_Finnmaid.Rmd/regional_time_series-2.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="figure/exploration_Finnmaid.Rmd/regional_time_series-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-regional_time_series-1">
+Past versions of regional_time_series-1.png
+</button>
+</p>
+<div id="fig-regional_time_series-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/jens-daniel-mueller/SOCAT_data_extraction/blob/1fcacc4ba088d818def1c129211b2daa02f83b0e/docs/figure/exploration_Finnmaid.Rmd/regional_time_series-1.png" target="_blank">1fcacc4</a>
+</td>
+<td>
+jens-daniel-mueller
+</td>
+<td>
+2021-07-14
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre><code>
 [[2]]</code></pre>
-<p><img src="figure/exploration_Finnmaid.Rmd/regional_time_series-3.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="figure/exploration_Finnmaid.Rmd/regional_time_series-2.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-regional_time_series-2">
+Past versions of regional_time_series-2.png
+</button>
+</p>
+<div id="fig-regional_time_series-2" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/jens-daniel-mueller/SOCAT_data_extraction/blob/1fcacc4ba088d818def1c129211b2daa02f83b0e/docs/figure/exploration_Finnmaid.Rmd/regional_time_series-2.png" target="_blank">1fcacc4</a>
+</td>
+<td>
+jens-daniel-mueller
+</td>
+<td>
+2021-07-14
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre><code>
 [[3]]</code></pre>
-<p><img src="figure/exploration_Finnmaid.Rmd/regional_time_series-4.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="figure/exploration_Finnmaid.Rmd/regional_time_series-3.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-regional_time_series-3">
+Past versions of regional_time_series-3.png
+</button>
+</p>
+<div id="fig-regional_time_series-3" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/jens-daniel-mueller/SOCAT_data_extraction/blob/1fcacc4ba088d818def1c129211b2daa02f83b0e/docs/figure/exploration_Finnmaid.Rmd/regional_time_series-3.png" target="_blank">1fcacc4</a>
+</td>
+<td>
+jens-daniel-mueller
+</td>
+<td>
+2021-07-14
+</td>
+</tr>
+</tbody>
+</table>
 </div>
 </div>
-<div id="write" class="section level1" number="5">
-<h1 number="5"><span class="header-section-number">5</span> Write</h1>
-<pre class="r"><code>df_reg %&gt;% 
+</div>
+</div>
+<div id="write-time-series-file" class="section level1" number="6">
+<h1 number="6"><span class="header-section-number">6</span> Write time series file</h1>
+<pre class="r"><code>SOCAT_Finn_region %&gt;% 
   select(-cruise) %&gt;% 
   write_csv(here::here(&quot;data/&quot;, &quot;Baltic_regions_fCO2_time_series.csv&quot;))</code></pre>
 <br>
@@ -958,9 +1205,9 @@ loaded via a namespace (and not attached):
 [41] DBI_1.1.0         git2r_0.27.1      magrittr_1.5      scales_1.1.1     
 [45] cli_2.1.0         stringi_1.5.3     farver_2.0.3      fs_1.5.0         
 [49] promises_1.1.1    xml2_1.3.2        ellipsis_0.3.1    generics_0.0.2   
-[53] vctrs_0.3.5       tools_4.0.3       glue_1.4.2        hms_0.5.3        
-[57] yaml_2.2.1        colorspace_1.4-1  rvest_0.3.6       knitr_1.30       
-[61] haven_2.3.1      </code></pre>
+[53] vctrs_0.3.5       tools_4.0.3       glue_1.4.2        maps_3.3.0       
+[57] hms_0.5.3         yaml_2.2.1        colorspace_1.4-1  rvest_0.3.6      
+[61] knitr_1.30        haven_2.3.1      </code></pre>
 </div>
 </div>
 
