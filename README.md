@@ -1,0 +1,5 @@
+# SOCAT_data_extraction
+
+A [workflowr][] project.
+
+[workflowr]: https://github.com/jdblischak/workflowr
