@@ -11,6 +11,10 @@ navbar:
         href: read_SOCAT_synthesis_files.html
       - text: Finnmaid
         href: read_SOCAT_synthesis_files_Finnmaid.html
+  - text: Data exploration
+    menu:
+      - text: Finnmaid
+        href: exploration_Finnmaid.html
   right:
   - icon: fa-github
     text: Source code

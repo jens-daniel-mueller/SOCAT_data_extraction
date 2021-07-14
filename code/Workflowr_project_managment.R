@@ -104,7 +104,7 @@ wflow_open("analysis/read_SOCAT_synthesis_files.Rmd")
 
 
 # commit regular changes (locally) and rebuild site
-wflow_publish(all = TRUE, message = "added read rmd")
+wflow_publish(all = TRUE, message = "calculated regional time series")
 
 # commit changes including _site.yml (locally) and rebuild site in the specified order
 wflow_publish(here::here(
@@ -112,7 +112,8 @@ wflow_publish(here::here(
   c(
     "index.Rmd",
     "read_SOCAT_synthesis_files.Rmd",
-    "read_SOCAT_synthesis_files_Finnmaid.Rmd"
+    "read_SOCAT_synthesis_files_Finnmaid.Rmd",
+    "exploration_Finnmaid.Rmd"
   )
 ),
 message = "read finnmaid data",

@@ -15,6 +15,7 @@ editor_options:
 ```{r libraries, include=FALSE}
 
 library(tidyverse)
+library(sp)
 
 ```
 
@@ -71,11 +72,14 @@ vars <- c("fCO2", "SST", "sal")
 for (i_var in vars) {
   # i_var <- vars[1]
   
+  print(
   df %>%
     ggplot(aes(mon, lat, z = !!sym(i_var))) +
     stat_summary_2d() +
     scale_fill_viridis_c(name = i_var) +
     coord_cartesian(expand = 0)
+  )
+  
 }
 
 
@@ -84,17 +88,115 @@ for (i_var in vars) {
 
 ## Regional time series
 
-```{r regional_time_series, eval=FALSE}
+```{r regional_time_series}
+
+# tag data inside study area to be analyzed
+cruises_G <- df %>%
+  mutate(
+    Area = point.in.polygon(
+      point.x = lon,
+      point.y = lat,
+      pol.x = c(16,20.5,20),
+      pol.y = c(55,57,54)
+    )) %>%  
+  filter(Area == 1) %>% 
+  distinct(cruise) %>% 
+  pull()
+
+cruises_E <- df %>%
+  mutate(
+    Area = point.in.polygon(
+      point.x = lon,
+      point.y = lat,
+      pol.x = c(18,18,19.5,20.5,19),
+      pol.y = c(56,57,58,58,56.5)
+    )) %>%  
+  filter(Area == 1) %>% 
+  distinct(cruise) %>% 
+  pull()
+
+cruises_P <- df %>% 
+  filter(lon > 29) %>% 
+  distinct(cruise) %>% 
+  pull()
+
+df <- df %>% 
+  mutate(route = "W",
+         route = if_else(cruise %in% cruises_E, "E", route),
+         route = if_else(cruise %in% cruises_G, "G", route),
+         route = if_else(cruise %in% cruises_P, "P", route))
+
+df <- df %>%
+  mutate(lat_grid = as.numeric(as.character(cut(
+    lat, seq(50, 65, 0.1), seq(50.05, 64.95, 0.1)
+  ))),
+  lon_grid = as.numeric(as.character(cut(
+    lon, seq(10, 35, 0.1), seq(10.05, 34.95, 0.1)
+  ))))
+
+df_routes <- df %>% 
+  count(lat_grid, lon_grid, route)
+
+
+df_routes %>%
+  ggplot(aes(lon_grid, lat_grid, fill = route)) +
+           geom_raster() +
+           coord_quickmap(expand = 0) +
+  scale_x_continuous(breaks = seq(10,30,1)) +
+  scale_y_continuous(breaks = seq(50,70,1)) +
+  facet_wrap(~ route)
+
 
 df <- df %>% 
   mutate(Area = case_when(
-    Lon>12 & Lon<12.6 ~ "1.MEB",
-    Lon>13.1 & Lon<14.3 ~ "2.ARK",
-    Lat>57.5 & Lat<58.5 & route %in% c("E", "G") ~ "4.EGS",
-    Lat>56.8 & Lat<57.5 & route=="W" ~ "3.WGS",
-    Lat>58.5 & Lat<59 & Lon>20 ~ "5.NGS",
-    Lon>22 & Lon<24 ~ "6.WGF",
-    Lon>24 & Lon<24.5 ~ "7.HGF"))
+    lon>12 & lon<12.6 ~ "1.MEB",
+    lon>13.1 & lon<14.3 ~ "2.ARK",
+    lat>57.5 & lat<58.5 & route %in% c("E", "G") ~ "4.EGS",
+    lat>56.8 & lat<57.5 & route=="W" ~ "3.WGS",
+    lat>58.5 & lat<59 & lon>20 ~ "5.NGS",
+    lon>22 & lon<24 ~ "6.WGF",
+    lon>24 & lon<24.5 ~ "7.HGF")) %>% 
+  filter(!is.na(Area))
+
+
+df_reg <- df %>% 
+  group_by(Area, cruise) %>% 
+  summarise(date_time = mean(date_time),
+            fCO2 = mean(fCO2),
+            SST = mean(SST),
+            sal = mean(sal)) %>% 
+  ungroup()
+
+
+df_reg_long <- df_reg %>% 
+  pivot_longer(fCO2:sal,
+               names_to = "parameter",
+               values_to = "value")
+
+df_reg_long %>%
+  group_split(parameter) %>%
+  # head(1) %>% 
+  map(
+    ~ ggplot(data = .x,
+             aes(date_time, value)) +
+      geom_point(size = 0.5) +
+      scale_x_datetime(breaks = "2 years",
+                       date_labels = "%Y") +
+      labs(y = unique(.x$parameter)) +
+      facet_grid(Area ~ .)
+  )
+
+
+```
+
+# Write
+
+```{r write_file}
+
+df_reg %>% 
+  select(-cruise) %>% 
+  write_csv(here::here("data/", "Baltic_regions_fCO2_time_series.csv"))
+
 
 ```
 
