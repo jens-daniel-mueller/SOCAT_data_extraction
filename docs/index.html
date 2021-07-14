@@ -302,6 +302,18 @@ $(document).ready(function () {
         <li>
   <a href="index.html">Home</a>
 </li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Read files
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="read_SOCAT_synthesis_files.html">Synthesis files</a>
+    </li>
+  </ul>
+</li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
         <li>
@@ -309,6 +321,13 @@ $(document).ready(function () {
     <span class="fa fa-github"></span>
      
     Source code
+  </a>
+</li>
+<li>
+  <a href="https://jens-daniel-mueller.github.io/">
+    <span class="fa fa-home"></span>
+     
+    Jens' homepage
   </a>
 </li>
       </ul>
@@ -384,16 +403,16 @@ This reproducible <a href="http://rmarkdown.rstudio.com">R Markdown</a> analysis
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomjensdanielmuellerSOCATdataextractiontreecd52b9414e02c2d22f93092a6f04154f58f89a03targetblankcd52b94a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/jens-daniel-mueller/SOCAT_data_extraction/tree/cd52b9414e02c2d22f93092a6f04154f58f89a03" target="_blank">cd52b94</a> </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomjensdanielmuellerSOCATdataextractiontree0b148896444c54727d6bac63bababa05e47c2565targetblank0b14889a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/jens-daniel-mueller/SOCAT_data_extraction/tree/0b148896444c54727d6bac63bababa05e47c2565" target="_blank">0b14889</a> </a>
 </p>
 </div>
-<div id="strongRepositoryversionstrongahrefhttpsgithubcomjensdanielmuellerSOCATdataextractiontreecd52b9414e02c2d22f93092a6f04154f58f89a03targetblankcd52b94a" class="panel-collapse collapse">
+<div id="strongRepositoryversionstrongahrefhttpsgithubcomjensdanielmuellerSOCATdataextractiontree0b148896444c54727d6bac63bababa05e47c2565targetblank0b14889a" class="panel-collapse collapse">
 <div class="panel-body">
 <p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility.
 </p>
 <p>
-The results in this page were generated with repository version <a href="https://github.com/jens-daniel-mueller/SOCAT_data_extraction/tree/cd52b9414e02c2d22f93092a6f04154f58f89a03" target="_blank">cd52b94</a>. See the <em>Past versions</em> tab to see a history of the changes made to the R Markdown and HTML files.
+The results in this page were generated with repository version <a href="https://github.com/jens-daniel-mueller/SOCAT_data_extraction/tree/0b148896444c54727d6bac63bababa05e47c2565" target="_blank">0b14889</a>. See the <em>Past versions</em> tab to see a history of the changes made to the R Markdown and HTML files.
 </p>
 <p>
 Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
@@ -403,12 +422,8 @@ Ignored files:
     Ignored:    .Rproj.user/
 
 Untracked files:
+    Untracked:  analysis/read_SOCAT_synthesis_files.Rmd
     Untracked:  code/Workflowr_project_managment.R
-
-Unstaged changes:
-    Modified:   .gitignore
-    Deleted:    analysis/about.Rmd
-    Deleted:    analysis/license.Rmd
 
 </code></pre>
 <p>
@@ -447,6 +462,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/jens-daniel-mueller/SOCAT_data_extraction/blob/0b148896444c54727d6bac63bababa05e47c2565/analysis/index.Rmd" target="_blank">0b14889</a>
+</td>
+<td>
+jens-daniel-mueller
+</td>
+<td>
+2021-07-14
+</td>
+<td>
+added read rmd
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/jens-daniel-mueller/SOCAT_data_extraction/33ab236d71f263b9fa0ce0292ef6f08df40dd061/docs/index.html" target="_blank">33ab236</a>
+</td>
+<td>
+jens-daniel-mueller
+</td>
+<td>
+2021-07-14
+</td>
+<td>
+Build site.
+</td>
+</tr>
 <tr>
 <td>
 html
@@ -488,7 +537,11 @@ Start workflowr project.
 </div>
 </div>
 </div>
-<p>Welcome to my research website.</p>
+<p>On this website we present R tools to extract data from SOCAT.</p>
+<p>Please navigate trough the navbar on top to take a look at the various chapters of this project. The links in the upper right corner bring you to the source code of this project and back to Jens’ main homepage.</p>
+<ol start="3" style="list-style-type: lower-alpha">
+<li>Dr. Jens Daniel Müller, 2019</li>
+</ol>
 
 
 <!-- Adjust MathJax settings so that all math formulae are shown using
