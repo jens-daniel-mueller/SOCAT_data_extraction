@@ -14,13 +14,22 @@
 
 <title>Read synthesis files</title>
 
-<script src="site_libs/header-attrs-2.5/header-attrs.js"></script>
+<script src="site_libs/header-attrs-2.10/header-attrs.js"></script>
 <script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <link href="site_libs/bootstrap-3.3.5/css/flatly.min.css" rel="stylesheet" />
 <script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
 <script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
 <script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
 <script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
 <link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
 <script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
@@ -28,8 +37,6 @@
 <script src="site_libs/navigation-1.1/codefolding.js"></script>
 <link href="site_libs/highlightjs-9.12.0/textmate.css" rel="stylesheet" />
 <script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
-<link href="site_libs/anchor-sections-1.0/anchor-sections.css" rel="stylesheet" />
-<script src="site_libs/anchor-sections-1.0/anchor-sections.js"></script>
 <link href="site_libs/font-awesome-5.1.0/css/all.css" rel="stylesheet" />
 <link href="site_libs/font-awesome-5.1.0/css/v4-shims.css" rel="stylesheet" />
 
@@ -53,11 +60,6 @@ div.section {
     </style>
 
 <style type="text/css">code{white-space: pre;}</style>
-<style type="text/css">
-  pre:not([class]) {
-    background-color: white;
-  }
-</style>
 <script type="text/javascript">
 if (window.hljs) {
   hljs.configure({languages: []});
@@ -70,32 +72,7 @@ if (window.hljs) {
 
 
 
-<style type="text/css">
-h1 {
-  font-size: 34px;
-}
-h1.title {
-  font-size: 38px;
-}
-h2 {
-  font-size: 30px;
-}
-h3 {
-  font-size: 24px;
-}
-h4 {
-  font-size: 18px;
-}
-h5 {
-  font-size: 16px;
-}
-h6 {
-  font-size: 12px;
-}
-.table th:not([align]) {
-  text-align: left;
-}
-</style>
+
 
 
 
@@ -105,10 +82,6 @@ h6 {
   max-width: 940px;
   margin-left: auto;
   margin-right: auto;
-}
-code {
-  color: inherit;
-  background-color: rgba(0, 0, 0, 0.04);
 }
 img {
   max-width:100%;
@@ -125,40 +98,13 @@ button.code-folding-btn:focus {
 summary {
   display: list-item;
 }
+pre code {
+  padding: 0;
+}
 </style>
 
 
 <style type="text/css">
-/* padding for bootstrap navbar */
-body {
-  padding-top: 51px;
-  padding-bottom: 40px;
-}
-/* offset scroll position for anchor links (for fixed navbar)  */
-.section h1 {
-  padding-top: 56px;
-  margin-top: -56px;
-}
-.section h2 {
-  padding-top: 56px;
-  margin-top: -56px;
-}
-.section h3 {
-  padding-top: 56px;
-  margin-top: -56px;
-}
-.section h4 {
-  padding-top: 56px;
-  margin-top: -56px;
-}
-.section h5 {
-  padding-top: 56px;
-  margin-top: -56px;
-}
-.section h6 {
-  padding-top: 56px;
-  margin-top: -56px;
-}
 .dropdown-submenu {
   position: relative;
 }
@@ -186,7 +132,7 @@ body {
   margin-right: -10px;
 }
 .dropdown-submenu:hover>a:after {
-  border-left-color: #ffffff;
+  border-left-color: #adb5bd;
 }
 .dropdown-submenu.pull-left {
   float: none;
@@ -198,7 +144,7 @@ body {
 }
 </style>
 
-<script>
+<script type="text/javascript">
 // manage active state of menu based on current page
 $(document).ready(function () {
   // active menu anchor
@@ -209,10 +155,23 @@ $(document).ready(function () {
   var menuAnchor = $('a[href="' + href + '"]');
 
   // mark it active
-  menuAnchor.parent().addClass('active');
+  menuAnchor.tab('show');
 
   // if it's got a parent navbar menu mark it active as well
   menuAnchor.closest('li.dropdown').addClass('active');
+
+  // Navbar adjustments
+  var navHeight = $(".navbar").first().height() + 15;
+  var style = document.createElement('style');
+  var pt = "padding-top: " + navHeight + "px; ";
+  var mt = "margin-top: -" + navHeight + "px; ";
+  var css = "";
+  // offset scroll position for anchor links (for fixed navbar)
+  for (var i = 1; i <= 6; i++) {
+    css += ".section h" + i + "{ " + pt + mt + "}\n";
+  }
+  style.innerHTML = "body {" + pt + "padding-bottom: 40px; }\n" + css;
+  document.head.appendChild(style);
 });
 </script>
 
@@ -224,7 +183,6 @@ $(document).ready(function () {
   max-height: 500px;
   min-height: 44px;
   overflow-y: auto;
-  background: white;
   border: 1px solid #ddd;
   border-radius: 4px;
 }
@@ -359,7 +317,7 @@ div.tocify {
 
 
 <!-- setup 3col/9col grid for toc_float and main content  -->
-<div class="row-fluid">
+<div class="row">
 <div class="col-xs-12 col-sm-4 col-md-3">
 <div id="TOC" class="tocify">
 </div>
@@ -433,11 +391,11 @@ div.tocify {
   </div><!--/.container -->
 </div><!--/.navbar -->
 
-<div class="fluid-row" id="header">
+<div id="header">
 
-<div class="btn-group pull-right">
-<button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span>Code</span> <span class="caret"></span></button>
-<ul class="dropdown-menu" style="min-width: 50px;">
+<div class="btn-group pull-right float-right">
+<button type="button" class="btn btn-default btn-xs btn-secondary btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span>Code</span> <span class="caret"></span></button>
+<ul class="dropdown-menu dropdown-menu-right" style="min-width: 50px;">
 <li><a id="rmd-show-all-code" href="#">Show All Code</a></li>
 <li><a id="rmd-hide-all-code" href="#">Hide All Code</a></li>
 </ul>
@@ -447,7 +405,7 @@ div.tocify {
 
 <h1 class="title toc-ignore">Read synthesis files</h1>
 <h4 class="author">Jens Daniel Müller</h4>
-<h4 class="date">14 July, 2021</h4>
+<h4 class="date">23 September, 2021</h4>
 
 </div>
 
@@ -472,7 +430,7 @@ div.tocify {
 <div class="tab-content">
 <div id="summary" class="tab-pane fade in active">
 <p>
-<strong>Last updated:</strong> 2021-07-14
+<strong>Last updated:</strong> 2021-09-23
 </p>
 <p>
 <strong>Checks:</strong> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 7 <span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span> 0
@@ -563,16 +521,16 @@ This reproducible <a href="http://rmarkdown.rstudio.com">R Markdown</a> analysis
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomjensdanielmuellerSOCATdataextractiontree6291613dc78dbed02108c28ad01e97cd40fa48c0targetblank6291613a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/jens-daniel-mueller/SOCAT_data_extraction/tree/6291613dc78dbed02108c28ad01e97cd40fa48c0" target="_blank">6291613</a> </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomjensdanielmuellerSOCATdataextractiontreeec6a999f83ec71ef468c3a4630d0026e217d017atargetblankec6a999a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/jens-daniel-mueller/SOCAT_data_extraction/tree/ec6a999f83ec71ef468c3a4630d0026e217d017a" target="_blank">ec6a999</a> </a>
 </p>
 </div>
-<div id="strongRepositoryversionstrongahrefhttpsgithubcomjensdanielmuellerSOCATdataextractiontree6291613dc78dbed02108c28ad01e97cd40fa48c0targetblank6291613a" class="panel-collapse collapse">
+<div id="strongRepositoryversionstrongahrefhttpsgithubcomjensdanielmuellerSOCATdataextractiontreeec6a999f83ec71ef468c3a4630d0026e217d017atargetblankec6a999a" class="panel-collapse collapse">
 <div class="panel-body">
 <p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility.
 </p>
 <p>
-The results in this page were generated with repository version <a href="https://github.com/jens-daniel-mueller/SOCAT_data_extraction/tree/6291613dc78dbed02108c28ad01e97cd40fa48c0" target="_blank">6291613</a>. See the <em>Past versions</em> tab to see a history of the changes made to the R Markdown and HTML files.
+The results in this page were generated with repository version <a href="https://github.com/jens-daniel-mueller/SOCAT_data_extraction/tree/ec6a999f83ec71ef468c3a4630d0026e217d017a" target="_blank">ec6a999</a>. See the <em>Past versions</em> tab to see a history of the changes made to the R Markdown and HTML files.
 </p>
 <p>
 Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
@@ -621,6 +579,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/jens-daniel-mueller/SOCAT_data_extraction/blob/ec6a999f83ec71ef468c3a4630d0026e217d017a/analysis/exploration_Finnmaid.Rmd" target="_blank">ec6a999</a>
+</td>
+<td>
+jens-daniel-mueller
+</td>
+<td>
+2021-09-23
+</td>
+<td>
+rebuild with EGS time series
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/jens-daniel-mueller/SOCAT_data_extraction/7c002b5794ea8a6b370a6179dd92b2686a9f77dc/docs/exploration_Finnmaid.html" target="_blank">7c002b5</a>
+</td>
+<td>
+jens-daniel-mueller
+</td>
+<td>
+2021-07-14
+</td>
+<td>
+Build site.
+</td>
+</tr>
 <tr>
 <td>
 Rmd
@@ -749,9 +741,9 @@ read finnmaid data
 </div>
 <div id="set-path" class="section level1" number="1">
 <h1 number="1"><span class="header-section-number">1</span> Set path</h1>
-<pre class="r"><code>path_SOCAT &lt;- &quot;/nfs/kryo/work/updata/SOCAT/&quot;
+<pre class="r"><code>path_SOCAT &lt;- &quot;/nfs/kryo/work/updata/socat/&quot;
 print(path_SOCAT)</code></pre>
-<pre><code>[1] &quot;/nfs/kryo/work/updata/SOCAT/&quot;</code></pre>
+<pre><code>[1] &quot;/nfs/kryo/work/updata/socat/&quot;</code></pre>
 </div>
 <div id="read-files" class="section level1" number="2">
 <h1 number="2"><span class="header-section-number">2</span> Read files</h1>
@@ -794,6 +786,43 @@ baltic_map +
   scale_fill_viridis_c() +
   labs(title = &quot;Observations on 0.1° x 0.1° grid&quot;)</code></pre>
 <p><img src="figure/exploration_Finnmaid.Rmd/track_map-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-track_map-1">
+Past versions of track_map-1.png
+</button>
+</p>
+<div id="fig-track_map-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/jens-daniel-mueller/SOCAT_data_extraction/blob/7c002b5794ea8a6b370a6179dd92b2686a9f77dc/docs/figure/exploration_Finnmaid.Rmd/track_map-1.png" target="_blank">7c002b5</a>
+</td>
+<td>
+jens-daniel-mueller
+</td>
+<td>
+2021-07-14
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 </div>
 <div id="monthly-climatologies" class="section level1" number="4">
 <h1 number="4"><span class="header-section-number">4</span> Monthly climatologies</h1>
@@ -836,6 +865,17 @@ Date
 <tbody>
 <tr>
 <td>
+<a href="https://github.com/jens-daniel-mueller/SOCAT_data_extraction/blob/7c002b5794ea8a6b370a6179dd92b2686a9f77dc/docs/figure/exploration_Finnmaid.Rmd/climatologies-1.png" target="_blank">7c002b5</a>
+</td>
+<td>
+jens-daniel-mueller
+</td>
+<td>
+2021-07-14
+</td>
+</tr>
+<tr>
+<td>
 <a href="https://github.com/jens-daniel-mueller/SOCAT_data_extraction/blob/1fcacc4ba088d818def1c129211b2daa02f83b0e/docs/figure/exploration_Finnmaid.Rmd/climatologies-1.png" target="_blank">1fcacc4</a>
 </td>
 <td>
@@ -874,6 +914,17 @@ Date
 <tbody>
 <tr>
 <td>
+<a href="https://github.com/jens-daniel-mueller/SOCAT_data_extraction/blob/7c002b5794ea8a6b370a6179dd92b2686a9f77dc/docs/figure/exploration_Finnmaid.Rmd/climatologies-2.png" target="_blank">7c002b5</a>
+</td>
+<td>
+jens-daniel-mueller
+</td>
+<td>
+2021-07-14
+</td>
+</tr>
+<tr>
+<td>
 <a href="https://github.com/jens-daniel-mueller/SOCAT_data_extraction/blob/1fcacc4ba088d818def1c129211b2daa02f83b0e/docs/figure/exploration_Finnmaid.Rmd/climatologies-2.png" target="_blank">1fcacc4</a>
 </td>
 <td>
@@ -910,6 +961,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/jens-daniel-mueller/SOCAT_data_extraction/blob/7c002b5794ea8a6b370a6179dd92b2686a9f77dc/docs/figure/exploration_Finnmaid.Rmd/climatologies-3.png" target="_blank">7c002b5</a>
+</td>
+<td>
+jens-daniel-mueller
+</td>
+<td>
+2021-07-14
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/jens-daniel-mueller/SOCAT_data_extraction/blob/1fcacc4ba088d818def1c129211b2daa02f83b0e/docs/figure/exploration_Finnmaid.Rmd/climatologies-3.png" target="_blank">1fcacc4</a>
@@ -988,6 +1050,43 @@ baltic_map +
               aes(lon_grid, lat_grid), fill = &quot;red&quot;) +
   facet_wrap( ~ route)</code></pre>
 <p><img src="figure/exploration_Finnmaid.Rmd/route_determination-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-route_determination-1">
+Past versions of route_determination-1.png
+</button>
+</p>
+<div id="fig-route_determination-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/jens-daniel-mueller/SOCAT_data_extraction/blob/7c002b5794ea8a6b370a6179dd92b2686a9f77dc/docs/figure/exploration_Finnmaid.Rmd/route_determination-1.png" target="_blank">7c002b5</a>
+</td>
+<td>
+jens-daniel-mueller
+</td>
+<td>
+2021-07-14
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 </div>
 <div id="assign-region" class="section level2" number="5.2">
 <h2 number="5.2"><span class="header-section-number">5.2</span> Assign region</h2>
@@ -1005,6 +1104,8 @@ SOCAT_Finn &lt;- SOCAT_Finn %&gt;%
 </div>
 <div id="plot-time-series" class="section level2" number="5.3">
 <h2 number="5.3"><span class="header-section-number">5.3</span> Plot time series</h2>
+<div id="all" class="section level3" number="5.3.1">
+<h3 number="5.3.1"><span class="header-section-number">5.3.1</span> All</h3>
 <pre class="r"><code># calculate mean values for each crossing of each region
 SOCAT_Finn_region &lt;- SOCAT_Finn %&gt;% 
   group_by(region, cruise) %&gt;% 
@@ -1059,6 +1160,17 @@ Date
 <tbody>
 <tr>
 <td>
+<a href="https://github.com/jens-daniel-mueller/SOCAT_data_extraction/blob/7c002b5794ea8a6b370a6179dd92b2686a9f77dc/docs/figure/exploration_Finnmaid.Rmd/regional_time_series-1.png" target="_blank">7c002b5</a>
+</td>
+<td>
+jens-daniel-mueller
+</td>
+<td>
+2021-07-14
+</td>
+</tr>
+<tr>
+<td>
 <a href="https://github.com/jens-daniel-mueller/SOCAT_data_extraction/blob/1fcacc4ba088d818def1c129211b2daa02f83b0e/docs/figure/exploration_Finnmaid.Rmd/regional_time_series-1.png" target="_blank">1fcacc4</a>
 </td>
 <td>
@@ -1097,6 +1209,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/jens-daniel-mueller/SOCAT_data_extraction/blob/7c002b5794ea8a6b370a6179dd92b2686a9f77dc/docs/figure/exploration_Finnmaid.Rmd/regional_time_series-2.png" target="_blank">7c002b5</a>
+</td>
+<td>
+jens-daniel-mueller
+</td>
+<td>
+2021-07-14
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/jens-daniel-mueller/SOCAT_data_extraction/blob/1fcacc4ba088d818def1c129211b2daa02f83b0e/docs/figure/exploration_Finnmaid.Rmd/regional_time_series-2.png" target="_blank">1fcacc4</a>
@@ -1139,6 +1262,17 @@ Date
 <tbody>
 <tr>
 <td>
+<a href="https://github.com/jens-daniel-mueller/SOCAT_data_extraction/blob/7c002b5794ea8a6b370a6179dd92b2686a9f77dc/docs/figure/exploration_Finnmaid.Rmd/regional_time_series-3.png" target="_blank">7c002b5</a>
+</td>
+<td>
+jens-daniel-mueller
+</td>
+<td>
+2021-07-14
+</td>
+</tr>
+<tr>
+<td>
 <a href="https://github.com/jens-daniel-mueller/SOCAT_data_extraction/blob/1fcacc4ba088d818def1c129211b2daa02f83b0e/docs/figure/exploration_Finnmaid.Rmd/regional_time_series-3.png" target="_blank">1fcacc4</a>
 </td>
 <td>
@@ -1151,6 +1285,21 @@ jens-daniel-mueller
 </tbody>
 </table>
 </div>
+</div>
+</div>
+<div id="pco2-egs" class="section level3" number="5.3.2">
+<h3 number="5.3.2"><span class="header-section-number">5.3.2</span> pCO2 EGS</h3>
+<pre class="r"><code>SOCAT_Finn_region_long %&gt;%
+  filter(parameter == &quot;fCO2&quot;,
+         region == &quot;4.EGS&quot;) %&gt;%
+  ggplot(aes(date_time, value)) +
+  geom_point(size = 0.5) +
+  scale_x_datetime(breaks = &quot;2 years&quot;,
+                   date_labels = &quot;%Y&quot;) +
+  labs(y = expression(pCO[2]~(µatm)),
+       title = &quot;SOOP Finnmaid observations - Eastern Gotland Sea&quot;) +
+  theme(axis.title.x = element_blank())</code></pre>
+<p><img src="figure/exploration_Finnmaid.Rmd/EGS_pCO2_time_series-1.png" width="672" style="display: block; margin: auto;" /></p>
 </div>
 </div>
 </div>
@@ -1188,26 +1337,27 @@ attached base packages:
 
 other attached packages:
  [1] sp_1.4-4        forcats_0.5.0   stringr_1.4.0   dplyr_1.0.5    
- [5] purrr_0.3.4     readr_1.4.0     tidyr_1.1.2     tibble_3.0.4   
- [9] ggplot2_3.3.3   tidyverse_1.3.0 workflowr_1.6.2
+ [5] purrr_0.3.4     readr_1.4.0     tidyr_1.1.3     tibble_3.1.3   
+ [9] ggplot2_3.3.5   tidyverse_1.3.0 workflowr_1.6.2
 
 loaded via a namespace (and not attached):
  [1] Rcpp_1.0.5        here_0.1          lubridate_1.7.9   lattice_0.20-41  
- [5] assertthat_0.2.1  rprojroot_2.0.2   digest_0.6.27     R6_2.5.0         
- [9] cellranger_1.1.0  backports_1.1.10  reprex_0.3.0      evaluate_0.14    
-[13] httr_1.4.2        pillar_1.4.7      rlang_0.4.10      readxl_1.3.1     
-[17] rstudioapi_0.11   whisker_0.4       blob_1.2.1        rmarkdown_2.5    
-[21] labeling_0.4.2    munsell_0.5.0     broom_0.7.5       compiler_4.0.3   
-[25] httpuv_1.5.4      modelr_0.1.8      xfun_0.18         pkgconfig_2.0.3  
-[29] htmltools_0.5.0   tidyselect_1.1.0  fansi_0.4.1       viridisLite_0.3.0
-[33] crayon_1.3.4      dbplyr_1.4.4      withr_2.3.0       later_1.1.0.1    
-[37] grid_4.0.3        jsonlite_1.7.1    gtable_0.3.0      lifecycle_1.0.0  
-[41] DBI_1.1.0         git2r_0.27.1      magrittr_1.5      scales_1.1.1     
-[45] cli_2.1.0         stringi_1.5.3     farver_2.0.3      fs_1.5.0         
-[49] promises_1.1.1    xml2_1.3.2        ellipsis_0.3.1    generics_0.0.2   
-[53] vctrs_0.3.5       tools_4.0.3       glue_1.4.2        maps_3.3.0       
-[57] hms_0.5.3         yaml_2.2.1        colorspace_1.4-1  rvest_0.3.6      
-[61] knitr_1.30        haven_2.3.1      </code></pre>
+ [5] assertthat_0.2.1  rprojroot_2.0.2   digest_0.6.27     utf8_1.1.4       
+ [9] R6_2.5.0          cellranger_1.1.0  backports_1.1.10  reprex_0.3.0     
+[13] evaluate_0.14     highr_0.8         httr_1.4.2        pillar_1.6.2     
+[17] rlang_0.4.11      readxl_1.3.1      rstudioapi_0.13   whisker_0.4      
+[21] jquerylib_0.1.4   blob_1.2.1        rmarkdown_2.10    labeling_0.4.2   
+[25] munsell_0.5.0     broom_0.7.9       compiler_4.0.3    httpuv_1.5.4     
+[29] modelr_0.1.8      xfun_0.25         pkgconfig_2.0.3   htmltools_0.5.1.1
+[33] tidyselect_1.1.0  viridisLite_0.3.0 fansi_0.4.1       crayon_1.3.4     
+[37] dbplyr_1.4.4      withr_2.3.0       later_1.2.0       grid_4.0.3       
+[41] jsonlite_1.7.1    gtable_0.3.0      lifecycle_1.0.0   DBI_1.1.0        
+[45] git2r_0.27.1      magrittr_1.5      scales_1.1.1      cli_3.0.1        
+[49] stringi_1.5.3     farver_2.0.3      fs_1.5.0          promises_1.1.1   
+[53] xml2_1.3.2        bslib_0.2.5.1     ellipsis_0.3.2    generics_0.1.0   
+[57] vctrs_0.3.8       tools_4.0.3       glue_1.4.2        maps_3.3.0       
+[61] hms_0.5.3         yaml_2.2.1        colorspace_2.0-2  rvest_0.3.6      
+[65] knitr_1.33        haven_2.3.1       sass_0.4.0       </code></pre>
 </div>
 </div>
 
@@ -1254,7 +1404,7 @@ $(document).ready(function () {
 
 $(document).ready(function () {
   $('.tabset-dropdown > .nav-tabs > li').click(function () {
-    $(this).parent().toggleClass('nav-tabs-open')
+    $(this).parent().toggleClass('nav-tabs-open');
   });
 });
 </script>
@@ -1268,6 +1418,9 @@ $(document).ready(function () {
 
 <script>
 $(document).ready(function ()  {
+
+    // temporarily add toc-ignore selector to headers for the consistency with Pandoc
+    $('.unlisted.unnumbered').addClass('toc-ignore')
 
     // move toc-ignore selectors from section div to header
     $('div.section.toc-ignore')
