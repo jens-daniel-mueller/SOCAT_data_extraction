@@ -30,7 +30,7 @@ theme_set(theme_bw())
 
 ```{r set_path}
 
-path_SOCAT <- "/nfs/kryo/work/updata/SOCAT/"
+path_SOCAT <- "/nfs/kryo/work/updata/socat/"
 print(path_SOCAT)
 
 ```
@@ -186,6 +186,8 @@ SOCAT_Finn <- SOCAT_Finn %>%
 
 ## Plot time series
 
+### All
+
 ```{r regional_time_series}
 
 # calculate mean values for each crossing of each region
@@ -217,6 +219,23 @@ SOCAT_Finn_region_long %>%
       facet_grid(region ~ .)
   )
 
+
+```
+
+### pCO2 EGS
+
+```{r EGS_pCO2_time_series, fig.asp=0.4}
+
+SOCAT_Finn_region_long %>%
+  filter(parameter == "fCO2",
+         region == "4.EGS") %>%
+  ggplot(aes(date_time, value)) +
+  geom_point(size = 0.5) +
+  scale_x_datetime(breaks = "2 years",
+                   date_labels = "%Y") +
+  labs(y = expression(pCO[2]~(µatm)),
+       title = "SOOP Finnmaid observations - Eastern Gotland Sea") +
+  theme(axis.title.x = element_blank())
 
 ```
 

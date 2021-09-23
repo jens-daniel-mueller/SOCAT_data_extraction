@@ -16,7 +16,7 @@ editor_options:
 
 ```{r set_path}
 
-path_SOCAT <- "/nfs/kryo/work/updata/SOCAT/"
+path_SOCAT <- "/nfs/kryo/work/updata/socat/"
 
 ```
 
