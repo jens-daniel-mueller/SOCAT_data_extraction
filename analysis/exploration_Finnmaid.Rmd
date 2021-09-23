@@ -224,7 +224,7 @@ SOCAT_Finn_region_long %>%
 
 ### pCO2 EGS
 
-```{r EGS_pCO2_time_series, fig.asp=0.4}
+```{r EGS_pCO2_time_series, fig.asp=0.3}
 
 SOCAT_Finn_region_long %>%
   filter(parameter == "fCO2",
